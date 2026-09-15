@@ -24,14 +24,6 @@ MonoBehaviour:
   - "そして、待ち合わせ場所で待っていたはずなのに。"
   - "そこから記憶がないんだ"
   collectibleWordSpans:
-  - lineIndex: 0
-    targetText: "この場所"
-    occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: b204bbea5f8149019427c80a8b7a26c8, type: 2}
-  - lineIndex: 1
-    targetText: "彼女"
-    occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: 148a533383234d35a22dbf94a5864e47, type: 2}
   - lineIndex: 1
     targetText: "初めてのデート"
     occurrenceIndex: 0
@@ -44,7 +36,3 @@ MonoBehaviour:
     targetText: "待ち合わせ場所"
     occurrenceIndex: 0
     wordData: {fileID: 11400000, guid: 463f343ea428444c953abc4d21432916, type: 2}
-  - lineIndex: 4
-    targetText: "記憶がない"
-    occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: 583e849a261b4c83b155124e40bb4a05, type: 2}

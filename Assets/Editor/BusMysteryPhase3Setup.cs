@@ -21,21 +21,16 @@ namespace BusMystery.Editor
         public static void SetupPhase3()
         {
             EnsureFolders();
-            var thisPlace = EnsureWord("this_place", "この場所", CollectibleWordType.Supporting);
-            var girlfriend = EnsureWord("girlfriend", "彼女", CollectibleWordType.Character);
             var firstDate = EnsureWord("first_date", "初めてのデート", CollectibleWordType.Supporting);
             var leftHomeEarly = EnsureWord("left_home_early", "少し早く家を出た", CollectibleWordType.Supporting);
             var meetingPlace = EnsureWord("meeting_place", "待ち合わせ場所", CollectibleWordType.Supporting);
-            var missingMemory = EnsureWord("missing_memory", "記憶がない", CollectibleWordType.Supporting);
             var station = EnsureWord("station", "駅", CollectibleWordType.Supporting);
-            var favoriteSong = EnsureWord("favorite_song", "大好きな曲", CollectibleWordType.Supporting);
             var loudSound = EnsureWord("loud_sound", "大きな音", CollectibleWordType.Supporting);
             var thatCar = EnsureWord("that_car", "あの車", CollectibleWordType.Supporting);
             var sameColor = EnsureWord("same_color", "同じ色", CollectibleWordType.Supporting);
             var mama = EnsureWord("mama", "ママ", CollectibleWordType.Supporting);
             var shirakawaBridge = EnsureWord("shirakawa_bridge", "白川橋", CollectibleWordType.Misleading);
             var oneStationBefore = EnsureWord("one_station_before", "一つ手前の駅", CollectibleWordType.Supporting);
-            var music = EnsureWord("music", "音楽", CollectibleWordType.Supporting);
             var bus = EnsureWord("bus", "バス", CollectibleWordType.Supporting);
 
             SetPassengerLines("young_man", new[]
@@ -66,18 +61,14 @@ namespace BusMystery.Editor
 
             SetPassengerSpans("young_man", new[]
             {
-                Span(0, "この場所", 0, thisPlace),
-                Span(1, "彼女", 0, girlfriend),
                 Span(1, "初めてのデート", 0, firstDate),
                 Span(2, "少し早く家を出た", 0, leftHomeEarly),
-                Span(3, "待ち合わせ場所", 0, meetingPlace),
-                Span(4, "記憶がない", 0, missingMemory)
+                Span(3, "待ち合わせ場所", 0, meetingPlace)
             });
             SetPassengerSpans("elementary_brother", new[]
             {
                 Span(0, "ママ", 0, mama),
                 Span(2, "駅", 0, station),
-                Span(3, "大好きな曲", 0, favoriteSong),
                 Span(3, "大きな音", 0, loudSound),
                 Span(4, "あの車", 0, thatCar),
                 Span(4, "ママ", 0, mama),
@@ -87,7 +78,6 @@ namespace BusMystery.Editor
             SetPassengerSpans("commuting_woman", new[]
             {
                 Span(0, "バス", 0, bus),
-                Span(1, "音楽", 0, music),
                 Span(2, "白川橋", 0, shirakawaBridge),
                 Span(3, "一つ手前の駅", 0, oneStationBefore),
                 Span(3, "バス", 0, bus),

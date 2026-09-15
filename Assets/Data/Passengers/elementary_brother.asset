@@ -34,10 +34,6 @@ MonoBehaviour:
     occurrenceIndex: 0
     wordData: {fileID: 11400000, guid: 62e402c2fad36f446b2551290d6065ec, type: 2}
   - lineIndex: 3
-    targetText: "大好きな曲"
-    occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: e7e0f8dba3d24b5daaa858b926826fa2, type: 2}
-  - lineIndex: 3
     targetText: "大きな音"
     occurrenceIndex: 0
     wordData: {fileID: 11400000, guid: 0a126d96ed8e45cf8e7e4d4c62faba56, type: 2}

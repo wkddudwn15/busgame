@@ -28,10 +28,6 @@ MonoBehaviour:
     targetText: "バス"
     occurrenceIndex: 0
     wordData: {fileID: 11400000, guid: 515e090169524301822e7467ce3f7729, type: 2}
-  - lineIndex: 1
-    targetText: "音楽"
-    occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: 98920c0779c140c0bddc886a1ce29c13, type: 2}
   - lineIndex: 2
     targetText: "白川橋"
     occurrenceIndex: 0
