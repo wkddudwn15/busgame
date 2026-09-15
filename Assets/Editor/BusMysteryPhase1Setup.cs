@@ -29,6 +29,7 @@ namespace BusMystery.Editor
         {
             EnsureFolders();
             var routeData = EnsureRouteData();
+            AssetDatabase.SaveAssets();
             CreateTitleScene();
             CreateBusScene(routeData);
             EnsureBuildSettings();
@@ -189,20 +190,10 @@ namespace BusMystery.Editor
             layout.childForceExpandHeight = false;
             layout.childForceExpandWidth = true;
 
-            var templateButton = CreateButton("Reservation Option Template", panel.transform, "停留所", new Color(0.16f, 0.18f, 0.2f), Color.white);
-            templateButton.gameObject.SetActive(false);
-            var option = templateButton.gameObject.AddComponent<StopReservationOption>();
-            SetObjectReference(option, "button", templateButton);
-            SetObjectReference(option, "label", templateButton.GetComponentInChildren<TMP_Text>());
-            var fitter = templateButton.gameObject.AddComponent<LayoutElement>();
-            fitter.minHeight = 44f;
-            fitter.preferredHeight = 48f;
-
             var reservationUi = panel.gameObject.AddComponent<BusReservationUI>();
             SetObjectReference(reservationUi, "routeController", route);
             SetObjectReference(reservationUi, "reservationController", reservation);
             SetObjectReference(reservationUi, "optionContainer", container);
-            SetObjectReference(reservationUi, "optionPrefab", option);
             SetObjectReference(reservationUi, "titleLabel", panelTitle);
 
             var hud = root.gameObject.AddComponent<BusHUD>();
@@ -218,6 +209,7 @@ namespace BusMystery.Editor
             SetObjectReference(hud, "eventLogLabel", eventLog);
 
             CreateEventSystem();
+            EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene, BusScenePath);
         }
 
@@ -324,7 +316,14 @@ namespace BusMystery.Editor
         private static void SetObjectReference(Object target, string propertyName, Object reference)
         {
             var serialized = new SerializedObject(target);
-            serialized.FindProperty(propertyName).objectReferenceValue = reference;
+            var property = serialized.FindProperty(propertyName);
+            if (property == null)
+            {
+                Debug.LogError($"Serialized property not found: {target.name}.{propertyName}");
+                return;
+            }
+
+            property.objectReferenceValue = reference;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(target);
         }

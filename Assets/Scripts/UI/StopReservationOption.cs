@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 namespace BusMystery.UI
 {
+    [RequireComponent(typeof(RectTransform))]
+    [RequireComponent(typeof(Image))]
+    [RequireComponent(typeof(Button))]
+    [RequireComponent(typeof(LayoutElement))]
     public class StopReservationOption : MonoBehaviour
     {
         [SerializeField] private Button button;
@@ -53,15 +57,8 @@ namespace BusMystery.UI
 
         private void ResolveReferences()
         {
-            if (button == null)
-            {
-                button = GetComponent<Button>();
-            }
-
-            if (label == null)
-            {
-                label = GetComponentInChildren<TMP_Text>(true);
-            }
+            button = GetComponent<Button>();
+            label = GetComponentInChildren<TMP_Text>(true);
         }
     }
 }

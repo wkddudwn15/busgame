@@ -11,7 +11,6 @@ namespace BusMystery.UI
         [SerializeField] private BusRouteController routeController;
         [SerializeField] private StopReservationController reservationController;
         [SerializeField] private RectTransform optionContainer;
-        [SerializeField] private StopReservationOption optionPrefab;
         [SerializeField] private TMP_Text titleLabel;
 
         private readonly List<StopReservationOption> options = new();
@@ -118,16 +117,7 @@ namespace BusMystery.UI
 
         private StopReservationOption CreateOption()
         {
-            StopReservationOption option;
-            if (optionPrefab != null)
-            {
-                option = Instantiate(optionPrefab, optionContainer);
-            }
-            else
-            {
-                option = CreateRuntimeOption();
-            }
-
+            var option = CreateRuntimeOption();
             var rectTransform = option.GetComponent<RectTransform>();
             rectTransform.SetParent(optionContainer, false);
             rectTransform.anchorMin = new Vector2(0f, 0.5f);
@@ -150,7 +140,12 @@ namespace BusMystery.UI
         private static StopReservationOption CreateRuntimeOption()
         {
             var optionObject = new GameObject("Reservation Option", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button), typeof(LayoutElement), typeof(StopReservationOption));
-            optionObject.GetComponent<Image>().color = new Color(0.16f, 0.18f, 0.2f);
+            var image = optionObject.GetComponent<Image>();
+            image.color = new Color(0.16f, 0.18f, 0.2f);
+            image.raycastTarget = true;
+
+            var button = optionObject.GetComponent<Button>();
+            button.targetGraphic = image;
 
             var label = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI)).GetComponent<TMP_Text>();
             label.transform.SetParent(optionObject.transform, false);
@@ -158,6 +153,7 @@ namespace BusMystery.UI
             label.fontSize = 22f;
             label.alignment = TextAlignmentOptions.Center;
             label.color = Color.white;
+            label.raycastTarget = false;
             label.textWrappingMode = TextWrappingModes.NoWrap;
 
             var labelRect = label.rectTransform;
