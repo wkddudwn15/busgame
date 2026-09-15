@@ -21,29 +21,77 @@ namespace BusMystery.Editor
         public static void SetupPhase3()
         {
             EnsureFolders();
+            var thisPlace = EnsureWord("this_place", "この場所", CollectibleWordType.Supporting);
+            var girlfriend = EnsureWord("girlfriend", "彼女", CollectibleWordType.Character);
+            var firstDate = EnsureWord("first_date", "初めてのデート", CollectibleWordType.Supporting);
+            var leftHomeEarly = EnsureWord("left_home_early", "少し早く家を出た", CollectibleWordType.Supporting);
+            var meetingPlace = EnsureWord("meeting_place", "待ち合わせ場所", CollectibleWordType.Supporting);
+            var missingMemory = EnsureWord("missing_memory", "記憶がない", CollectibleWordType.Supporting);
             var station = EnsureWord("station", "駅", CollectibleWordType.Supporting);
-            var motherCar = EnsureWord("mother_car", "母さんの車", CollectibleWordType.Supporting);
-            var smartphone = EnsureWord("smartphone", "スマホ", CollectibleWordType.Supporting);
-            var whiteCar = EnsureWord("white_car", "白い車", CollectibleWordType.Supporting);
+            var favoriteSong = EnsureWord("favorite_song", "大好きな曲", CollectibleWordType.Supporting);
+            var loudSound = EnsureWord("loud_sound", "大きな音", CollectibleWordType.Supporting);
+            var thatCar = EnsureWord("that_car", "あの車", CollectibleWordType.Supporting);
+            var sameColor = EnsureWord("same_color", "同じ色", CollectibleWordType.Supporting);
             var mama = EnsureWord("mama", "ママ", CollectibleWordType.Supporting);
-            var crashSound = EnsureWord("crash_sound", "衝突音", CollectibleWordType.Supporting);
-            var tireSound = EnsureWord("tire_sound", "タイヤの音", CollectibleWordType.Supporting);
+            var shirakawaBridge = EnsureWord("shirakawa_bridge", "白川橋", CollectibleWordType.Misleading);
+            var oneStationBefore = EnsureWord("one_station_before", "一つ手前の駅", CollectibleWordType.Supporting);
+            var music = EnsureWord("music", "音楽", CollectibleWordType.Supporting);
+            var bus = EnsureWord("bus", "バス", CollectibleWordType.Supporting);
+
+            SetPassengerLines("young_man", new[]
+            {
+                "僕はなんでこの場所にいるんだろう。",
+                "今日は彼女と初めてのデートだったんだ。",
+                "だからいつもより少し早く家を出たんだ。",
+                "そして、待ち合わせ場所で待っていたはずなのに。",
+                "そこから記憶がないんだ"
+            });
+            SetPassengerLines("elementary_brother", new[]
+            {
+                "今日はママとお兄ちゃんと一緒におでかけなんだよ。",
+                "僕の大好きな車に乗って！",
+                "お兄ちゃんが駅に用事があるって言っていたから、ついてきたんだ。",
+                "大好きな曲をかけて、お歌を歌いながら、ドーンって大きな音がしたの！",
+                "あの車、ママの車と同じ色だったな。",
+                "あれ、お兄ちゃんはいるけど、ママはどこにいるの？"
+            });
+            SetPassengerLines("commuting_woman", new[]
+            {
+                "なんか、バスっていいよね。",
+                "音楽を聴きながら、無心で外の風景を見るのが好きなの。",
+                "今日は白川橋駅に向かってたはず。",
+                "いつも最寄りの駅より一つ手前の駅で降りて、そこからバスに乗り換えるんだ。",
+                "……そういえば今日って、バスに乗ったんだっけ。"
+            });
 
             SetPassengerSpans("young_man", new[]
             {
-                Span(0, "駅", 0, station),
-                Span(1, "母さんの車", 0, motherCar),
-                Span(3, "スマホ", 0, smartphone)
+                Span(0, "この場所", 0, thisPlace),
+                Span(1, "彼女", 0, girlfriend),
+                Span(1, "初めてのデート", 0, firstDate),
+                Span(2, "少し早く家を出た", 0, leftHomeEarly),
+                Span(3, "待ち合わせ場所", 0, meetingPlace),
+                Span(4, "記憶がない", 0, missingMemory)
             });
             SetPassengerSpans("elementary_brother", new[]
             {
-                Span(2, "白い車", 0, whiteCar),
-                Span(3, "ママ", 0, mama)
+                Span(0, "ママ", 0, mama),
+                Span(2, "駅", 0, station),
+                Span(3, "大好きな曲", 0, favoriteSong),
+                Span(3, "大きな音", 0, loudSound),
+                Span(4, "あの車", 0, thatCar),
+                Span(4, "ママ", 0, mama),
+                Span(4, "同じ色", 0, sameColor),
+                Span(5, "ママ", 0, mama)
             });
             SetPassengerSpans("commuting_woman", new[]
             {
-                Span(3, "衝突音", 0, crashSound),
-                Span(4, "タイヤの音", 0, tireSound)
+                Span(0, "バス", 0, bus),
+                Span(1, "音楽", 0, music),
+                Span(2, "白川橋", 0, shirakawaBridge),
+                Span(3, "一つ手前の駅", 0, oneStationBefore),
+                Span(3, "バス", 0, bus),
+                Span(4, "バス", 0, bus)
             });
             AssetDatabase.SaveAssets();
 
@@ -110,6 +158,34 @@ namespace BusMystery.Editor
         private static WordSpanSeed Span(int lineIndex, string targetText, int occurrenceIndex, CollectibleWordData word)
         {
             return new WordSpanSeed(lineIndex, targetText, occurrenceIndex, word);
+        }
+
+        private static void SetPassengerLines(string passengerId, string[] lines)
+        {
+            var path = $"{PassengerDataFolder}/{passengerId}.asset";
+            var passenger = AssetDatabase.LoadAssetAtPath<PassengerMemoryData>(path);
+            if (passenger == null)
+            {
+                Debug.LogError($"Passenger data was not found: {path}. Run Setup Phase 2 before Setup Phase 3.");
+                return;
+            }
+
+            var serialized = new SerializedObject(passenger);
+            var memoryLines = serialized.FindProperty("memoryLines");
+            if (memoryLines == null)
+            {
+                Debug.LogError($"memoryLines property was not found on {passenger.name}.");
+                return;
+            }
+
+            memoryLines.arraySize = lines.Length;
+            for (var i = 0; i < lines.Length; i++)
+            {
+                memoryLines.GetArrayElementAtIndex(i).stringValue = lines[i];
+            }
+
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(passenger);
         }
 
         private static void SetPassengerSpans(string passengerId, WordSpanSeed[] spans)

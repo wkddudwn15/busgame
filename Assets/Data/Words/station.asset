@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Words.CollectibleWordData
   id: station
   displayText: "\u99C5"
-  description: 
+  description:
   internalType: 2

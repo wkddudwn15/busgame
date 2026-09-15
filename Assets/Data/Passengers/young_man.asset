@@ -13,27 +13,38 @@ MonoBehaviour:
   m_Name: young_man
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Passengers.PassengerMemoryData
   id: young_man
-  displayName: "20\u4EE3\u7537\u6027"
+  displayName: "20代男性"
   viewDirection: 2
   hotspotAnchorMin: {x: 0.2, y: 0.31}
   hotspotAnchorMax: {x: 0.41, y: 0.63}
   memoryLines:
-  - "\u99C5\u307E\u3067\u306F\u3001\u307E\u3060\u5C11\u3057\u4F59\u88D5\u304C\u3042\u308B\u306F\u305A\u3060\u3063\u305F\u3002"
-  - "\u6BCD\u3055\u3093\u306E\u8ECA\u3067\u3001\u5F1F\u3068\u4E00\u7DD2\u306B\u5411\u304B\u3063\u3066\u3044\u305F\u3002\u521D\u3081\u3066\u306E\u30C7\u30FC\u30C8\u3067\u3001\u5999\u306B\u843D\u3061\u7740\u304B\u306A\u304B\u3063\u305F\u3002"
-  - "\u5C11\u3057\u65E9\u304F\u5BB6\u3092\u51FA\u305F\u304B\u3089\u3001\u9045\u308C\u308B\u5FC3\u914D\u306F\u306A\u3044\u3068\u601D\u3063\u3066\u3044\u305F\u3002"
-  - "\u30B9\u30DE\u30DB\u306B\u300E\u3082\u3046\u3059\u3050\u7740\u304F\u300F\u3063\u3066\u9001\u3063\u305F\u3002\u753B\u9762\u3070\u304B\u308A\u898B\u3066\u3044\u305F\u3002"
-  - "\u6BCD\u3055\u3093\u304C\u6E1B\u901F\u3057\u305F\u304B\u3069\u3046\u304B\u3082\u3001\u5F8C\u308D\u306B\u4F55\u304C\u3044\u305F\u306E\u304B\u3082\u3001\u3061\u3083\u3093\u3068\u306F\u899A\u3048\u3066\u3044\u306A\u3044\u3002"
-  - "\u6B21\u306B\u9854\u3092\u4E0A\u3052\u305F\u6642\u306B\u306F\u3001\u97F3\u304C\u5168\u90E8\u3092\u5857\u308A\u3064\u3076\u3057\u3066\u3044\u305F\u3002"
+  - "僕はなんでこの場所にいるんだろう。"
+  - "今日は彼女と初めてのデートだったんだ。"
+  - "だからいつもより少し早く家を出たんだ。"
+  - "そして、待ち合わせ場所で待っていたはずなのに。"
+  - "そこから記憶がないんだ"
   collectibleWordSpans:
   - lineIndex: 0
-    targetText: "\u99C5"
+    targetText: "この場所"
     occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: 62e402c2fad36f446b2551290d6065ec, type: 2}
+    wordData: {fileID: 11400000, guid: b204bbea5f8149019427c80a8b7a26c8, type: 2}
   - lineIndex: 1
-    targetText: "\u6BCD\u3055\u3093\u306E\u8ECA"
+    targetText: "彼女"
     occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: e3e70e40c53d3fa479dc673037c653ef, type: 2}
+    wordData: {fileID: 11400000, guid: 148a533383234d35a22dbf94a5864e47, type: 2}
+  - lineIndex: 1
+    targetText: "初めてのデート"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 12e1b1071dba4670ad8de1175e8e1134, type: 2}
+  - lineIndex: 2
+    targetText: "少し早く家を出た"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 8b7e918ec9bb4aab9fe2a287c6e55655, type: 2}
   - lineIndex: 3
-    targetText: "\u30B9\u30DE\u30DB"
+    targetText: "待ち合わせ場所"
     occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: 73e3b0b38f19eb546b7b457e3aadf8fd, type: 2}
+    wordData: {fileID: 11400000, guid: 463f343ea428444c953abc4d21432916, type: 2}
+  - lineIndex: 4
+    targetText: "記憶がない"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 583e849a261b4c83b155124e40bb4a05, type: 2}

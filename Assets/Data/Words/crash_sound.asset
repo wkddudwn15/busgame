@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Words.CollectibleWordData
   id: crash_sound
   displayText: "\u885D\u7A81\u97F3"
-  description: 
+  description:
   internalType: 2

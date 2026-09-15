@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Words.CollectibleWordData
   id: tire_sound
   displayText: "\u30BF\u30A4\u30E4\u306E\u97F3"
-  description: 
+  description:
   internalType: 2

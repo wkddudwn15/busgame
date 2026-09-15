@@ -13,24 +13,38 @@ MonoBehaviour:
   m_Name: commuting_woman
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Passengers.PassengerMemoryData
   id: commuting_woman
-  displayName: "30\u4EE3\u5973\u6027"
+  displayName: "30代女性"
   viewDirection: 0
   hotspotAnchorMin: {x: 0.5, y: 0.3}
   hotspotAnchorMax: {x: 0.73, y: 0.64}
   memoryLines:
-  - "\u4ED5\u4E8B\u5E30\u308A\u3060\u3063\u305F\u3002\u3044\u3064\u3082\u306F\u6700\u5BC4\u308A\u306E\u3072\u3068\u3064\u624B\u524D\u3067\u964D\u308A\u3066\u3001\u305D\u3053\u304B\u3089\u30D0\u30B9\u306B\u4E57\u308B\u3002"
-  - "\u305D\u306E\u65E5\u3082\u99C5\u306E\u8FD1\u304F\u3092\u6B69\u3044\u3066\u3044\u305F\u3002\u8ECA\u306B\u4E57\u3063\u3066\u3044\u305F\u308F\u3051\u3058\u3083\u306A\u3044\u3002"
-  - "\u4EBA\u306E\u6D41\u308C\u3068\u4FE1\u53F7\u306E\u97F3\u3060\u3051\u304C\u3042\u3063\u3066\u3001\u3044\u3064\u3082\u901A\u308A\u306E\u5E30\u308A\u9053\u3060\u3063\u305F\u3002"
-  - "\u7A81\u7136\u3001\u5927\u304D\u306A\u885D\u7A81\u97F3\u304C\u3057\u305F\u3002"
-  - "\u632F\u308A\u5411\u304F\u3088\u308A\u5148\u306B\u3001\u30BF\u30A4\u30E4\u306E\u97F3\u304C\u8FD1\u3065\u3044\u3066\u304D\u305F\u3002\u8ECA\u304C\u3053\u3063\u3061\u3078\u6765\u308B\u97F3\u3060\u3063\u305F\u3002"
-  - "\u3067\u3082\u3001\u8ECA\u305D\u306E\u3082\u306E\u306F\u898B\u3066\u3044\u306A\u3044\u3002"
-  - "\u4F55\u304B\u304C\u8FEB\u3063\u3066\u304F\u308B\u3068\u5206\u304B\u3063\u305F\u77AC\u9593\u3001\u8A18\u61B6\u306F\u305D\u3053\u3067\u9014\u5207\u308C\u3066\u3044\u308B\u3002"
+  - "なんか、バスっていいよね。"
+  - "音楽を聴きながら、無心で外の風景を見るのが好きなの。"
+  - "今日は白川橋駅に向かってたはず。"
+  - "いつも最寄りの駅より一つ手前の駅で降りて、そこからバスに乗り換えるんだ。"
+  - "……そういえば今日って、バスに乗ったんだっけ。"
   collectibleWordSpans:
+  - lineIndex: 0
+    targetText: "バス"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 515e090169524301822e7467ce3f7729, type: 2}
+  - lineIndex: 1
+    targetText: "音楽"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 98920c0779c140c0bddc886a1ce29c13, type: 2}
+  - lineIndex: 2
+    targetText: "白川橋"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 5e0fd7408e044454a8e1e58a8577ac1f, type: 2}
   - lineIndex: 3
-    targetText: "\u885D\u7A81\u97F3"
+    targetText: "一つ手前の駅"
     occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: 82678a492f1b7d9468d5b4c772e0cbfc, type: 2}
+    wordData: {fileID: 11400000, guid: d760820b82a64e07b1717dc080a455cf, type: 2}
+  - lineIndex: 3
+    targetText: "バス"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 515e090169524301822e7467ce3f7729, type: 2}
   - lineIndex: 4
-    targetText: "\u30BF\u30A4\u30E4\u306E\u97F3"
+    targetText: "バス"
     occurrenceIndex: 0
-    wordData: {fileID: 11400000, guid: bbdc3486202af42419775e4266a60080, type: 2}
+    wordData: {fileID: 11400000, guid: 515e090169524301822e7467ce3f7729, type: 2}

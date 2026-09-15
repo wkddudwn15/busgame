@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Words.CollectibleWordData
   id: smartphone
   displayText: "\u30B9\u30DE\u30DB"
-  description: 
+  description:
   internalType: 2

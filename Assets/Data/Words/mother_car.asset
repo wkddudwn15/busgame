@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Words.CollectibleWordData
   id: mother_car
   displayText: "\u6BCD\u3055\u3093\u306E\u8ECA"
-  description: 
+  description:
   internalType: 2

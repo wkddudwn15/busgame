@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Words.CollectibleWordData
   id: white_car
   displayText: "\u767D\u3044\u8ECA"
-  description: 
+  description:
   internalType: 2
