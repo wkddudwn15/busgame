@@ -15,6 +15,7 @@ namespace BusMystery.Editor
     {
         private const string BusScenePath = "Assets/Scenes/Bus.unity";
         private const string PassengerDataFolder = "Assets/Data/Passengers";
+        private const string JapaneseFontPath = "Assets/Fonts/NotoSansJP-VariableFont_wght SDF.asset";
 
         [MenuItem("Tools/BusMystery/Setup Phase 2")]
         public static void SetupPhase2()
@@ -32,6 +33,7 @@ namespace BusMystery.Editor
             var scene = EditorSceneManager.OpenScene(BusScenePath);
             var canvas = Object.FindFirstObjectByType<Canvas>();
             var viewController = Object.FindFirstObjectByType<BusViewController>();
+            var japaneseFont = LoadJapaneseFont();
 
             if (canvas == null || viewController == null)
             {
@@ -42,8 +44,8 @@ namespace BusMystery.Editor
             RemoveGeneratedObject("Phase 2 Passenger Hotspots");
             RemoveGeneratedObject("Passenger Memory Panel");
 
-            var memoryUI = CreateMemoryUI(canvas.transform);
-            CreateHotspots(canvas.transform, viewController, memoryUI, passengers);
+            var memoryUI = CreateMemoryUI(canvas.transform, japaneseFont);
+            CreateHotspots(canvas.transform, viewController, memoryUI, passengers, japaneseFont);
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -150,20 +152,31 @@ namespace BusMystery.Editor
             return data;
         }
 
-        private static PassengerMemoryUI CreateMemoryUI(Transform canvasTransform)
+        private static TMP_FontAsset LoadJapaneseFont()
+        {
+            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(JapaneseFontPath);
+            if (font == null)
+            {
+                Debug.LogError($"Japanese TMP font asset was not found: {JapaneseFontPath}");
+            }
+
+            return font;
+        }
+
+        private static PassengerMemoryUI CreateMemoryUI(Transform canvasTransform, TMP_FontAsset japaneseFont)
         {
             var panel = CreateImage("Passenger Memory Panel", canvasTransform, new Color(0.02f, 0.025f, 0.03f, 0.94f));
             SetRect(panel.rectTransform, new Vector2(0.08f, 0.05f), new Vector2(0.92f, 0.34f), new Vector2(0.5f, 0.5f), Vector2.zero);
 
-            var speaker = CreateText("Speaker Label", panel.transform, "乗客", 26f, TextAlignmentOptions.Left);
+            var speaker = CreateText("Speaker Label", panel.transform, "乗客", 26f, TextAlignmentOptions.Left, japaneseFont);
             SetRect(speaker.rectTransform, new Vector2(0.04f, 0.72f), new Vector2(0.96f, 0.92f), new Vector2(0f, 0.5f), Vector2.zero);
             speaker.color = new Color(1f, 0.92f, 0.62f);
 
-            var body = CreateText("Memory Body Label", panel.transform, "", 28f, TextAlignmentOptions.Left);
+            var body = CreateText("Memory Body Label", panel.transform, "", 28f, TextAlignmentOptions.Left, japaneseFont);
             SetRect(body.rectTransform, new Vector2(0.04f, 0.18f), new Vector2(0.96f, 0.70f), new Vector2(0f, 0.5f), Vector2.zero);
             body.textWrappingMode = TextWrappingModes.Normal;
 
-            var hint = CreateText("Memory Hint Label", panel.transform, "クリック / Enter / Space：次へ　ESC：閉じる", 18f, TextAlignmentOptions.Right);
+            var hint = CreateText("Memory Hint Label", panel.transform, "クリック / Enter / Space：次へ　ESC：閉じる", 18f, TextAlignmentOptions.Right, japaneseFont);
             SetRect(hint.rectTransform, new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.16f), new Vector2(1f, 0.5f), Vector2.zero);
             hint.color = new Color(0.72f, 0.76f, 0.82f);
 
@@ -174,7 +187,7 @@ namespace BusMystery.Editor
             return memoryUI;
         }
 
-        private static void CreateHotspots(Transform canvasTransform, BusViewController viewController, PassengerMemoryUI memoryUI, IReadOnlyList<PassengerMemoryData> passengers)
+        private static void CreateHotspots(Transform canvasTransform, BusViewController viewController, PassengerMemoryUI memoryUI, IReadOnlyList<PassengerMemoryData> passengers, TMP_FontAsset japaneseFont)
         {
             var root = new GameObject("Phase 2 Passenger Hotspots", typeof(RectTransform));
             var rootRect = root.GetComponent<RectTransform>();
@@ -184,7 +197,7 @@ namespace BusMystery.Editor
             for (var i = 0; i < passengers.Count; i++)
             {
                 var passenger = passengers[i];
-                var button = CreateButton($"{passenger.Id} Hotspot", root.transform, passenger.DisplayName, new Color(0.28f, 0.31f, 0.34f, 0.86f), Color.white);
+                var button = CreateButton($"{passenger.Id} Hotspot", root.transform, passenger.DisplayName, new Color(0.28f, 0.31f, 0.34f, 0.86f), Color.white, japaneseFont);
                 SetRect(button.GetComponent<RectTransform>(), passenger.HotspotAnchorMin, passenger.HotspotAnchorMax, new Vector2(0.5f, 0.5f), Vector2.zero);
 
                 var hotspot = button.gameObject.AddComponent<PassengerHotspot>();
@@ -211,11 +224,12 @@ namespace BusMystery.Editor
             return image;
         }
 
-        private static TMP_Text CreateText(string name, Transform parent, string text, float fontSize, TextAlignmentOptions alignment)
+        private static TMP_Text CreateText(string name, Transform parent, string text, float fontSize, TextAlignmentOptions alignment, TMP_FontAsset font)
         {
             var label = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI)).GetComponent<TMP_Text>();
             label.transform.SetParent(parent, false);
             label.text = text;
+            label.font = font;
             label.fontSize = fontSize;
             label.alignment = alignment;
             label.color = Color.white;
@@ -223,7 +237,7 @@ namespace BusMystery.Editor
             return label;
         }
 
-        private static Button CreateButton(string name, Transform parent, string text, Color normalColor, Color textColor)
+        private static Button CreateButton(string name, Transform parent, string text, Color normalColor, Color textColor, TMP_FontAsset font)
         {
             var image = CreateImage(name, parent, normalColor);
             image.raycastTarget = true;
@@ -238,7 +252,7 @@ namespace BusMystery.Editor
             colors.disabledColor = new Color(0.12f, 0.12f, 0.12f, 0.6f);
             button.colors = colors;
 
-            var label = CreateText("Label", image.transform, text, 22f, TextAlignmentOptions.Center);
+            var label = CreateText("Label", image.transform, text, 22f, TextAlignmentOptions.Center, font);
             label.color = textColor;
             label.raycastTarget = false;
             SetRect(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero);
