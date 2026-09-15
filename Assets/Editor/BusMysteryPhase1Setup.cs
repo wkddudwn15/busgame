@@ -181,7 +181,7 @@ namespace BusMystery.Editor
             var panelTitle = CreateText("Reservation Title", panel.transform, "降車停留所予約", 24, TextAlignmentOptions.Center);
             SetRect(panelTitle.rectTransform, new Vector2(0.04f, 0.90f), new Vector2(0.96f, 0.98f), new Vector2(0.5f, 0.5f), Vector2.zero);
 
-            var container = CreateRect("Reservation Options", panel.transform, new Vector2(0.06f, 0.04f), new Vector2(0.94f, 0.88f), new Vector2(0.5f, 0.5f));
+            var container = CreateRect("Reservation Options", panel.transform, new Vector2(0.06f, 0.04f), new Vector2(0.94f, 0.88f), new Vector2(0.5f, 0.5f), Vector2.zero);
             var layout = container.gameObject.AddComponent<VerticalLayoutGroup>();
             layout.spacing = 7f;
             layout.childControlHeight = true;
@@ -283,7 +283,7 @@ namespace BusMystery.Editor
             label.fontSize = fontSize;
             label.alignment = alignment;
             label.color = Color.white;
-            label.enableWordWrapping = false;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
             return label;
         }
 
