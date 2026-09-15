@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73571d31c83a5ed4a990a93213498ea8, type: 3}
+  m_Name: Phase1BusRoute
+  m_EditorClassIdentifier: Assembly-CSharp::BusMystery.Bus.BusRouteData
+  stops:
+  - id: sakuradai_residential
+    displayName: "\u685C\u53F0\u4F4F\u5B85\u524D"
+    order: 1
+    travelTimeFromPreviousSeconds: 270
+    terminal: 0
+    futureInfo: 
+  - id: minamigaoka_park
+    displayName: "\u5357\u30F6\u4E18\u516C\u5712\u524D"
+    order: 2
+    travelTimeFromPreviousSeconds: 300
+    terminal: 0
+    futureInfo: 
+  - id: asahi_shopping_street
+    displayName: "\u65ED\u901A\u308A\u5546\u5E97\u8857"
+    order: 3
+    travelTimeFromPreviousSeconds: 270
+    terminal: 0
+    futureInfo: 
+  - id: kirigaoka_station_east_street
+    displayName: "\u9727\u30F6\u4E18\u99C5\u6771\u53E3\u901A\u308A"
+    order: 4
+    travelTimeFromPreviousSeconds: 330
+    terminal: 0
+    futureInfo: 
+  - id: kirigaoka_station
+    displayName: "\u9727\u30F6\u4E18\u99C5"
+    order: 5
+    travelTimeFromPreviousSeconds: 300
+    terminal: 0
+    futureInfo: 
+  - id: shirakawa_bridge
+    displayName: "\u767D\u5DDD\u6A4B"
+    order: 6
+    travelTimeFromPreviousSeconds: 270
+    terminal: 0
+    futureInfo: 
+  - id: nishino_town
+    displayName: "\u897F\u91CE\u753A"
+    order: 7
+    travelTimeFromPreviousSeconds: 300
+    terminal: 0
+    futureInfo: 
+  - id: unknown_terminal
+    displayName: "\u25A0\u25A0\u25A1#%?"
+    order: 8
+    travelTimeFromPreviousSeconds: 360
+    terminal: 1
+    futureInfo: 
+  approachNoticeSeconds: 30
