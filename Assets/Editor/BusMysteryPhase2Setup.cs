@@ -15,7 +15,7 @@ namespace BusMystery.Editor
     {
         private const string BusScenePath = "Assets/Scenes/Bus.unity";
         private const string PassengerDataFolder = "Assets/Data/Passengers";
-        private const string JapaneseFontPath = "Assets/Fonts/NotoSansJP-VariableFont_wght SDF.asset";
+        private const string JapaneseFontPath = "Assets/Fonts/NotoSansJP-Regular SDF.asset";
 
         [MenuItem("Tools/BusMystery/Setup Phase 2")]
         public static void SetupPhase2()
