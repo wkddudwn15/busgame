@@ -18,15 +18,7 @@ namespace BusMystery.UI
             stopIndex = index;
             reservationController = reservation;
 
-            if (button == null)
-            {
-                button = GetComponent<Button>();
-            }
-
-            if (label == null)
-            {
-                label = GetComponentInChildren<TMP_Text>();
-            }
+            ResolveReferences();
 
             if (label != null)
             {
@@ -57,6 +49,19 @@ namespace BusMystery.UI
         private void Reserve()
         {
             reservationController?.TryReserve(stopIndex);
+        }
+
+        private void ResolveReferences()
+        {
+            if (button == null)
+            {
+                button = GetComponent<Button>();
+            }
+
+            if (label == null)
+            {
+                label = GetComponentInChildren<TMP_Text>(true);
+            }
         }
     }
 }
