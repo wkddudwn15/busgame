@@ -1,5 +1,6 @@
 using BusMystery.Bus;
 using BusMystery.Core;
+using BusMystery.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,6 +28,11 @@ namespace BusMystery.Input
         {
             var keyboard = Keyboard.current;
             if (keyboard == null)
+            {
+                return;
+            }
+
+            if (PassengerMemoryUI.IsAnyOpen)
             {
                 return;
             }
