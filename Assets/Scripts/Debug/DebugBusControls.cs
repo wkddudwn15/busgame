@@ -1,5 +1,6 @@
 using BusMystery.Bus;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace BusMystery.DebugTools
 {
@@ -8,6 +9,7 @@ namespace BusMystery.DebugTools
         [SerializeField] private BusClock busClock;
         [SerializeField] private BusRouteController routeController;
         [SerializeField, Min(0f)] private float jumpBeforeStopSeconds = 20f;
+        [SerializeField] private bool visible;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private void Awake()
@@ -23,8 +25,22 @@ namespace BusMystery.DebugTools
             }
         }
 
+        private void Update()
+        {
+            var keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.f1Key.wasPressedThisFrame)
+            {
+                visible = !visible;
+            }
+        }
+
         private void OnGUI()
         {
+            if (!visible)
+            {
+                return;
+            }
+
             const int width = 240;
             GUILayout.BeginArea(new Rect(12, 12, width, Screen.height - 24), GUI.skin.box);
             GUILayout.Label("Bus Debug");

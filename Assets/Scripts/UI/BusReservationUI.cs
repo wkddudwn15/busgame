@@ -99,9 +99,27 @@ namespace BusMystery.UI
                 return;
             }
 
+            var visibilityChanged = false;
             for (var i = 0; i < options.Count; i++)
             {
+                var shouldDisplay = ShouldDisplayStop(i);
+                if (options[i].gameObject.activeSelf != shouldDisplay)
+                {
+                    options[i].gameObject.SetActive(shouldDisplay);
+                    visibilityChanged = true;
+                }
+
+                if (!shouldDisplay)
+                {
+                    continue;
+                }
+
                 options[i].Refresh(routeController.IsPassed(i), reservationController.ReservedStopIndex == i);
+            }
+
+            if (visibilityChanged)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(optionContainer);
             }
         }
 
@@ -164,6 +182,14 @@ namespace BusMystery.UI
             labelRect.sizeDelta = Vector2.zero;
 
             return optionObject.GetComponent<StopReservationOption>();
+        }
+
+        private bool ShouldDisplayStop(int stopIndex)
+        {
+            const int hiddenTerminalStopIndex = 7;
+            const int revealAfterStopIndex = 6;
+
+            return stopIndex != hiddenTerminalStopIndex || routeController.IsPassed(revealAfterStopIndex);
         }
     }
 }
