@@ -8,6 +8,9 @@ namespace BusMystery.UI
 {
     public class PassengerMemoryUI : MonoBehaviour
     {
+        private const string HoverColor = "#FFD966";
+        private const string CollectedColor = "#9FD7FF";
+
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private TMP_Text speakerLabel;
         [SerializeField] private TMP_Text bodyLabel;
@@ -171,6 +174,7 @@ namespace BusMystery.UI
             }
 
             wordCollectionManager?.Collect(word);
+            Refresh();
             return true;
         }
 
@@ -236,9 +240,17 @@ namespace BusMystery.UI
             foreach (var span in spans)
             {
                 var wordText = result.Substring(span.Start, span.Length);
-                var linkedText = span.Word.Id == highlightedWordId
-                    ? $"<link=\"{span.Word.Id}\"><u><color=#FFD966>{wordText}</color></u></link>"
-                    : $"<link=\"{span.Word.Id}\">{wordText}</link>";
+                var isHighlighted = span.Word.Id == highlightedWordId;
+                var isCollected = wordCollectionManager != null && wordCollectionManager.IsCollected(span.Word);
+                var color = isHighlighted && !isCollected ? HoverColor : isCollected ? CollectedColor : null;
+                var styledText = color != null ? $"<color={color}>{wordText}</color>" : wordText;
+
+                if (isHighlighted)
+                {
+                    styledText = $"<u>{styledText}</u>";
+                }
+
+                var linkedText = $"<link=\"{span.Word.Id}\">{styledText}</link>";
 
                 result = result.Remove(span.Start, span.Length).Insert(span.Start, linkedText);
             }
