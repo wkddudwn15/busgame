@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BusMystery.Bus;
+using BusMystery.Words;
 using UnityEngine;
 
 namespace BusMystery.Passengers
@@ -13,6 +14,7 @@ namespace BusMystery.Passengers
         [SerializeField] private Vector2 hotspotAnchorMin = new(0.4f, 0.4f);
         [SerializeField] private Vector2 hotspotAnchorMax = new(0.6f, 0.7f);
         [SerializeField] private List<string> memoryLines = new();
+        [SerializeField] private List<MemoryWordSpan> collectibleWordSpans = new();
 
         public string Id => id;
         public string DisplayName => displayName;
@@ -20,5 +22,6 @@ namespace BusMystery.Passengers
         public Vector2 HotspotAnchorMin => hotspotAnchorMin;
         public Vector2 HotspotAnchorMax => hotspotAnchorMax;
         public IReadOnlyList<string> MemoryLines => memoryLines;
+        public IReadOnlyList<MemoryWordSpan> CollectibleWordSpans => collectibleWordSpans;
     }
 }
