@@ -188,10 +188,9 @@ namespace BusMystery.Editor
                 SetRect(button.GetComponent<RectTransform>(), passenger.HotspotAnchorMin, passenger.HotspotAnchorMax, new Vector2(0.5f, 0.5f), Vector2.zero);
 
                 var hotspot = button.gameObject.AddComponent<PassengerHotspot>();
-                SetObjectReference(hotspot, "passengerData", passenger);
-                SetObjectReference(hotspot, "viewController", viewController);
-                SetObjectReference(hotspot, "memoryUI", memoryUI);
+                hotspot.Initialize(passenger, viewController, memoryUI);
                 SetObjectReference(hotspot, "label", button.GetComponentInChildren<TMP_Text>(true));
+                EditorUtility.SetDirty(hotspot);
             }
         }
 
