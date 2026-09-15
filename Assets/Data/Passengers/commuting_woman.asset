@@ -25,3 +25,12 @@ MonoBehaviour:
   - "\u632F\u308A\u5411\u304F\u3088\u308A\u5148\u306B\u3001\u30BF\u30A4\u30E4\u306E\u97F3\u304C\u8FD1\u3065\u3044\u3066\u304D\u305F\u3002\u8ECA\u304C\u3053\u3063\u3061\u3078\u6765\u308B\u97F3\u3060\u3063\u305F\u3002"
   - "\u3067\u3082\u3001\u8ECA\u305D\u306E\u3082\u306E\u306F\u898B\u3066\u3044\u306A\u3044\u3002"
   - "\u4F55\u304B\u304C\u8FEB\u3063\u3066\u304F\u308B\u3068\u5206\u304B\u3063\u305F\u77AC\u9593\u3001\u8A18\u61B6\u306F\u305D\u3053\u3067\u9014\u5207\u308C\u3066\u3044\u308B\u3002"
+  collectibleWordSpans:
+  - lineIndex: 3
+    targetText: "\u885D\u7A81\u97F3"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: 82678a492f1b7d9468d5b4c772e0cbfc, type: 2}
+  - lineIndex: 4
+    targetText: "\u30BF\u30A4\u30E4\u306E\u97F3"
+    occurrenceIndex: 0
+    wordData: {fileID: 11400000, guid: bbdc3486202af42419775e4266a60080, type: 2}
