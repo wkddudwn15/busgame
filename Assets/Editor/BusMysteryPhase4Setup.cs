@@ -126,9 +126,9 @@ namespace BusMystery.Editor
             SetRect(content, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(0f, 96f));
 
             var grid = content.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(210f, 64f);
-            grid.spacing = new Vector2(14f, 14f);
-            grid.padding = new RectOffset(18, 18, 18, 18);
+            grid.cellSize = new Vector2(300f, 72f);
+            grid.spacing = new Vector2(20f, 16f);
+            grid.padding = new RectOffset(40, 40, 24, 24);
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 3;
             grid.childAlignment = TextAnchor.UpperLeft;
@@ -143,8 +143,8 @@ namespace BusMystery.Editor
             cardTemplate.raycastTarget = false;
             SetRect(cardTemplate.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), grid.cellSize);
             var cardLayout = cardTemplate.gameObject.AddComponent<LayoutElement>();
-            cardLayout.preferredWidth = 210f;
-            cardLayout.preferredHeight = 64f;
+            cardLayout.preferredWidth = grid.cellSize.x;
+            cardLayout.preferredHeight = grid.cellSize.y;
 
             var cardLabel = CreateText("Word Label", cardTemplate.transform, "単語", 22f, TextAlignmentOptions.Center, font);
             cardLabel.color = new Color(0.12f, 0.08f, 0.04f);
