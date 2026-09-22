@@ -16,6 +16,9 @@ namespace BusMystery.UI
         [SerializeField] private TMP_Text bodyLabel;
         [SerializeField] private WordCollectionManager wordCollectionManager;
         [SerializeField, Min(1f)] private float typewriterCharactersPerSecond = 24f;
+        [SerializeField] private AudioSource dialogueAudioSource;
+        [SerializeField] private AudioClip dialogueStartClip;
+        [SerializeField, Range(0f, 1f)] private float dialogueStartVolume = 0.7f;
 
         private PassengerMemoryData currentData;
         private int lineIndex;
@@ -235,6 +238,7 @@ namespace BusMystery.UI
             hoveredWordId = null;
             ResetTypewriterState(false);
             Refresh();
+            PlayDialogueStartSound();
 
             if (totalVisibleCharacters <= 0)
             {
@@ -335,6 +339,16 @@ namespace BusMystery.UI
             }
 
             return canvas.worldCamera;
+        }
+
+        private void PlayDialogueStartSound()
+        {
+            if (dialogueAudioSource == null || dialogueStartClip == null)
+            {
+                return;
+            }
+
+            dialogueAudioSource.PlayOneShot(dialogueStartClip, dialogueStartVolume);
         }
 
         private string BuildLinkedLine(string source, int sourceLineIndex, string highlightedWordId)
