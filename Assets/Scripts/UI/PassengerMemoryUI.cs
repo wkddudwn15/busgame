@@ -15,7 +15,7 @@ namespace BusMystery.UI
         [SerializeField] private TMP_Text speakerLabel;
         [SerializeField] private TMP_Text bodyLabel;
         [SerializeField] private WordCollectionManager wordCollectionManager;
-        [SerializeField, Min(1f)] private float typewriterCharactersPerSecond = 36f;
+        [SerializeField, Min(1f)] private float typewriterCharactersPerSecond = 24f;
 
         private PassengerMemoryData currentData;
         private int lineIndex;
