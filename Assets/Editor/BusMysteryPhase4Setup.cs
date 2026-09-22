@@ -127,11 +127,11 @@ namespace BusMystery.Editor
 
             var grid = content.gameObject.AddComponent<GridLayoutGroup>();
             grid.cellSize = new Vector2(300f, 72f);
-            grid.spacing = new Vector2(20f, 16f);
-            grid.padding = new RectOffset(40, 40, 24, 24);
+            grid.spacing = new Vector2(24f, 16f);
+            grid.padding = new RectOffset(0, 0, 24, 24);
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 3;
-            grid.childAlignment = TextAnchor.UpperLeft;
+            grid.childAlignment = TextAnchor.UpperCenter;
 
             var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
