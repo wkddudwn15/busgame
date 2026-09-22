@@ -32,7 +32,7 @@ namespace BusMystery.Input
                 return;
             }
 
-            if (PassengerMemoryUI.IsAnyOpen)
+            if (PassengerMemoryUI.IsAnyOpen || WordNotebookUI.ShouldBlockBusInput)
             {
                 return;
             }
