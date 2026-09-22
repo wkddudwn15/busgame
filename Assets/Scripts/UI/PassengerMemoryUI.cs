@@ -174,8 +174,6 @@ namespace BusMystery.UI
                 return false;
             }
 
-            Debug.Log($"[Phase4Debug] PassengerMemoryUI.TryCollectWordAt wordCollectionManagerNull={wordCollectionManager == null} managerInstanceId={(wordCollectionManager != null ? wordCollectionManager.GetInstanceID().ToString() : "<null>")} wordId={word.Id}");
-            LogSceneManagers();
             wordCollectionManager?.Collect(word);
             Refresh();
             return true;
@@ -281,16 +279,6 @@ namespace BusMystery.UI
             }
 
             return -1;
-        }
-
-        private static void LogSceneManagers()
-        {
-            var managers = FindObjectsByType<WordCollectionManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            Debug.Log($"[Phase4Debug] PassengerMemoryUI Scene WordCollectionManager count={managers.Length}");
-            foreach (var manager in managers)
-            {
-                Debug.Log($"[Phase4Debug] PassengerMemoryUI Scene WordCollectionManager instanceId={manager.GetInstanceID()} name={manager.name} activeSelf={manager.gameObject.activeSelf} activeInHierarchy={manager.gameObject.activeInHierarchy} collectedWordsCount={manager.CollectedWords.Count}");
-            }
         }
     }
 }

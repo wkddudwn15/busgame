@@ -62,13 +62,10 @@ namespace BusMystery.UI
         {
             if (panelRoot == null)
             {
-                Debug.Log("[Phase4Debug] WordNotebookUI.Open panelRoot is null");
                 return;
             }
 
             ResolveCollectionManager();
-            Debug.Log($"[Phase4Debug] WordNotebookUI.Open collectionManagerNull={collectionManager == null} managerInstanceId={(collectionManager != null ? collectionManager.GetInstanceID().ToString() : "<null>")} collectedWordsCount={(collectionManager != null ? collectionManager.CollectedWords.Count.ToString() : "<null>")} cardContainerNull={cardContainer == null} cardPrefabNull={cardPrefab == null}");
-            LogSceneManagers();
             panelRoot.SetActive(true);
             IsAnyOpen = true;
             Refresh();
@@ -100,10 +97,8 @@ namespace BusMystery.UI
         private void Refresh()
         {
             ResolveCollectionManager();
-            Debug.Log($"[Phase4Debug] WordNotebookUI.Refresh start collectionManagerNull={collectionManager == null} managerInstanceId={(collectionManager != null ? collectionManager.GetInstanceID().ToString() : "<null>")} collectedWordsCount={(collectionManager != null ? collectionManager.CollectedWords.Count.ToString() : "<null>")} cardContainerNull={cardContainer == null} cardPrefabNull={cardPrefab == null}");
             if (cardContainer == null || cardPrefab == null || collectionManager == null)
             {
-                Debug.Log("[Phase4Debug] WordNotebookUI.Refresh stopped before card generation");
                 return;
             }
 
@@ -117,18 +112,14 @@ namespace BusMystery.UI
 
             cards.Clear();
 
-            var generatedCount = 0;
             foreach (var word in collectionManager.CollectedWords)
             {
                 var card = Instantiate(cardPrefab, cardContainer);
                 card.gameObject.SetActive(true);
                 card.Initialize(word);
                 cards.Add(card);
-                generatedCount++;
-                Debug.Log($"[Phase4Debug] WordNotebookUI.Refresh generatedCard wordId={(word != null ? word.Id : "<null>")} activeSelf={card.gameObject.activeSelf} activeInHierarchy={card.gameObject.activeInHierarchy}");
             }
 
-            Debug.Log($"[Phase4Debug] WordNotebookUI.Refresh generatedCount={generatedCount}");
             LayoutRebuilder.ForceRebuildLayoutImmediate(cardContainer);
         }
 
@@ -181,16 +172,6 @@ namespace BusMystery.UI
 
             collectionManager.WordCollected -= HandleWordCollected;
             isSubscribed = false;
-        }
-
-        private static void LogSceneManagers()
-        {
-            var managers = FindObjectsByType<WordCollectionManager>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            Debug.Log($"[Phase4Debug] WordNotebookUI Scene WordCollectionManager count={managers.Length}");
-            foreach (var manager in managers)
-            {
-                Debug.Log($"[Phase4Debug] WordNotebookUI Scene WordCollectionManager instanceId={manager.GetInstanceID()} name={manager.name} activeSelf={manager.gameObject.activeSelf} activeInHierarchy={manager.gameObject.activeInHierarchy} collectedWordsCount={manager.CollectedWords.Count}");
-            }
         }
     }
 }

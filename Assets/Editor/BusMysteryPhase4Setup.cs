@@ -118,12 +118,12 @@ namespace BusMystery.Editor
 
             var viewport = CreateImage("Viewport", scrollView.transform, new Color(1f, 1f, 1f, 0f));
             SetRect(viewport.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero);
-            var mask = viewport.gameObject.AddComponent<Mask>();
-            mask.showMaskGraphic = false;
+            viewport.raycastTarget = false;
+            viewport.gameObject.AddComponent<RectMask2D>();
 
             var content = new GameObject("Content", typeof(RectTransform)).GetComponent<RectTransform>();
             content.SetParent(viewport.transform, false);
-            SetRect(content, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, 0f));
+            SetRect(content, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 1f), new Vector2(0f, 96f));
 
             var grid = content.gameObject.AddComponent<GridLayoutGroup>();
             grid.cellSize = new Vector2(210f, 64f);
@@ -141,6 +141,7 @@ namespace BusMystery.Editor
 
             var cardTemplate = CreateImage("Notebook Word Card Template", content, new Color(0.96f, 0.90f, 0.76f));
             cardTemplate.raycastTarget = false;
+            SetRect(cardTemplate.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), grid.cellSize);
             var cardLayout = cardTemplate.gameObject.AddComponent<LayoutElement>();
             cardLayout.preferredWidth = 210f;
             cardLayout.preferredHeight = 64f;
