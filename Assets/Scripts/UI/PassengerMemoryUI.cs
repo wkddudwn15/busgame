@@ -23,6 +23,7 @@ namespace BusMystery.UI
 
         public static bool IsAnyOpen { get; private set; }
         public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
+        public WordCollectionManager CollectionManager => wordCollectionManager;
 
         private void Awake()
         {

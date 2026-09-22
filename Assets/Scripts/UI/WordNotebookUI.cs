@@ -15,6 +15,7 @@ namespace BusMystery.UI
 
         private readonly List<NotebookWordCardUI> cards = new();
         private static int closedFrame = -1;
+        private bool isSubscribed;
 
         public static bool IsAnyOpen { get; private set; }
         public static bool ShouldBlockBusInput => IsAnyOpen || closedFrame == Time.frameCount;
@@ -22,28 +23,19 @@ namespace BusMystery.UI
 
         private void Awake()
         {
-            if (collectionManager == null)
-            {
-                collectionManager = FindFirstObjectByType<WordCollectionManager>();
-            }
-
+            ResolveCollectionManager();
             Close();
         }
 
         private void OnEnable()
         {
-            if (collectionManager != null)
-            {
-                collectionManager.WordCollected += HandleWordCollected;
-            }
+            ResolveCollectionManager();
+            Subscribe();
         }
 
         private void OnDisable()
         {
-            if (collectionManager != null)
-            {
-                collectionManager.WordCollected -= HandleWordCollected;
-            }
+            Unsubscribe();
 
             if (IsOpen)
             {
@@ -73,6 +65,7 @@ namespace BusMystery.UI
                 return;
             }
 
+            ResolveCollectionManager();
             panelRoot.SetActive(true);
             IsAnyOpen = true;
             Refresh();
@@ -103,6 +96,7 @@ namespace BusMystery.UI
 
         private void Refresh()
         {
+            ResolveCollectionManager();
             if (cardContainer == null || cardPrefab == null || collectionManager == null)
             {
                 return;
@@ -127,6 +121,57 @@ namespace BusMystery.UI
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(cardContainer);
+        }
+
+        private void ResolveCollectionManager()
+        {
+            var memoryUI = FindFirstObjectByType<PassengerMemoryUI>(FindObjectsInactive.Include);
+            if (memoryUI != null && memoryUI.CollectionManager != null)
+            {
+                SetCollectionManager(memoryUI.CollectionManager);
+                return;
+            }
+
+            if (collectionManager != null)
+            {
+                return;
+            }
+
+            SetCollectionManager(FindFirstObjectByType<WordCollectionManager>(FindObjectsInactive.Include));
+        }
+
+        private void SetCollectionManager(WordCollectionManager manager)
+        {
+            if (collectionManager == manager)
+            {
+                return;
+            }
+
+            Unsubscribe();
+            collectionManager = manager;
+            Subscribe();
+        }
+
+        private void Subscribe()
+        {
+            if (isSubscribed || collectionManager == null || !isActiveAndEnabled)
+            {
+                return;
+            }
+
+            collectionManager.WordCollected += HandleWordCollected;
+            isSubscribed = true;
+        }
+
+        private void Unsubscribe()
+        {
+            if (!isSubscribed || collectionManager == null)
+            {
+                return;
+            }
+
+            collectionManager.WordCollected -= HandleWordCollected;
+            isSubscribed = false;
         }
     }
 }

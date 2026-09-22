@@ -35,7 +35,8 @@ namespace BusMystery.Editor
 
             RemoveGeneratedObject(RootObjectName);
 
-            var collectionManager = EnsureCollectionManager();
+            var memoryUI = Object.FindFirstObjectByType<PassengerMemoryUI>(FindObjectsInactive.Include);
+            var collectionManager = EnsureSharedCollectionManager(memoryUI);
             var font = LoadJapaneseFont();
             if (font == null)
             {
@@ -53,15 +54,25 @@ namespace BusMystery.Editor
             Debug.Log("BusMystery Phase 4 setup complete.");
         }
 
-        private static WordCollectionManager EnsureCollectionManager()
+        private static WordCollectionManager EnsureSharedCollectionManager(PassengerMemoryUI memoryUI)
         {
-            var manager = Object.FindFirstObjectByType<WordCollectionManager>();
-            if (manager != null)
+            var manager = memoryUI != null ? memoryUI.CollectionManager : null;
+            if (manager == null)
             {
-                return manager;
+                manager = Object.FindFirstObjectByType<WordCollectionManager>(FindObjectsInactive.Include);
             }
 
-            return new GameObject("Word Collection Manager").AddComponent<WordCollectionManager>();
+            if (manager == null)
+            {
+                manager = new GameObject("Word Collection Manager").AddComponent<WordCollectionManager>();
+            }
+
+            if (memoryUI != null && memoryUI.CollectionManager != manager)
+            {
+                SetObjectReference(memoryUI, "wordCollectionManager", manager);
+            }
+
+            return manager;
         }
 
         private static TMP_FontAsset LoadJapaneseFont()
