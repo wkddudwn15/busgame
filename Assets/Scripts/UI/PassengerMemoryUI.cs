@@ -15,11 +15,16 @@ namespace BusMystery.UI
         [SerializeField] private TMP_Text speakerLabel;
         [SerializeField] private TMP_Text bodyLabel;
         [SerializeField] private WordCollectionManager wordCollectionManager;
+        [SerializeField, Min(1f)] private float typewriterCharactersPerSecond = 36f;
 
         private PassengerMemoryData currentData;
         private int lineIndex;
         private int openedFrame = -1;
         private string hoveredWordId;
+        private int visibleCharacters;
+        private int totalVisibleCharacters;
+        private float visibleCharacterProgress;
+        private bool isLineFullyVisible = true;
 
         public static bool IsAnyOpen { get; private set; }
         public bool IsOpen => panelRoot != null && panelRoot.activeSelf;
@@ -52,6 +57,8 @@ namespace BusMystery.UI
                 return;
             }
 
+            UpdateTypewriter();
+
             if (WordNotebookUI.ShouldBlockBusInput)
             {
                 return;
@@ -68,7 +75,7 @@ namespace BusMystery.UI
 
                 if (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame)
                 {
-                    Advance();
+                    AdvanceOrCompleteLine();
                 }
             }
 
@@ -76,12 +83,21 @@ namespace BusMystery.UI
             if (mouse != null)
             {
                 var mousePosition = mouse.position.ReadValue();
-                UpdateHoveredWord(mousePosition);
+                if (isLineFullyVisible)
+                {
+                    UpdateHoveredWord(mousePosition);
+                }
 
                 if (mouse.leftButton.wasPressedThisFrame)
                 {
                     if (!IsBodyLabelClick(mousePosition))
                     {
+                        return;
+                    }
+
+                    if (!isLineFullyVisible)
+                    {
+                        CompleteCurrentLine();
                         return;
                     }
 
@@ -108,7 +124,7 @@ namespace BusMystery.UI
             hoveredWordId = null;
             panelRoot.SetActive(true);
             IsAnyOpen = true;
-            Refresh();
+            StartCurrentLine();
         }
 
         public void Advance()
@@ -126,7 +142,7 @@ namespace BusMystery.UI
                 return;
             }
 
-            Refresh();
+            StartCurrentLine();
         }
 
         public void Close()
@@ -140,6 +156,7 @@ namespace BusMystery.UI
             lineIndex = 0;
             openedFrame = -1;
             hoveredWordId = null;
+            ResetTypewriterState(true);
             IsAnyOpen = false;
         }
 
@@ -160,11 +177,19 @@ namespace BusMystery.UI
                 var hasLine = currentData.MemoryLines != null && lineIndex >= 0 && lineIndex < currentData.MemoryLines.Count;
                 bodyLabel.text = hasLine ? BuildLinkedLine(currentData.MemoryLines[lineIndex], lineIndex, hoveredWordId) : string.Empty;
                 bodyLabel.ForceMeshUpdate();
+                totalVisibleCharacters = bodyLabel.textInfo.characterCount;
+                visibleCharacters = isLineFullyVisible ? totalVisibleCharacters : Mathf.Clamp(visibleCharacters, 0, totalVisibleCharacters);
+                bodyLabel.maxVisibleCharacters = visibleCharacters;
             }
         }
 
         private void UpdateHoveredWord(Vector2 screenPosition)
         {
+            if (!isLineFullyVisible)
+            {
+                return;
+            }
+
             var word = FindWordAt(screenPosition);
             var nextHoveredWordId = word != null ? word.Id : null;
             if (hoveredWordId == nextHoveredWordId)
@@ -178,6 +203,11 @@ namespace BusMystery.UI
 
         private bool TryCollectWordAt(Vector2 screenPosition)
         {
+            if (!isLineFullyVisible)
+            {
+                return false;
+            }
+
             var word = FindWordAt(screenPosition);
             if (word == null)
             {
@@ -187,6 +217,73 @@ namespace BusMystery.UI
             wordCollectionManager?.Collect(word);
             Refresh();
             return true;
+        }
+
+        private void AdvanceOrCompleteLine()
+        {
+            if (!isLineFullyVisible)
+            {
+                CompleteCurrentLine();
+                return;
+            }
+
+            Advance();
+        }
+
+        private void StartCurrentLine()
+        {
+            hoveredWordId = null;
+            ResetTypewriterState(false);
+            Refresh();
+
+            if (totalVisibleCharacters <= 0)
+            {
+                CompleteCurrentLine();
+            }
+        }
+
+        private void UpdateTypewriter()
+        {
+            if (isLineFullyVisible || bodyLabel == null)
+            {
+                return;
+            }
+
+            if (typewriterCharactersPerSecond <= 0f)
+            {
+                CompleteCurrentLine();
+                return;
+            }
+
+            visibleCharacterProgress += typewriterCharactersPerSecond * Time.deltaTime;
+            visibleCharacters = Mathf.Clamp(Mathf.FloorToInt(visibleCharacterProgress), 0, totalVisibleCharacters);
+            bodyLabel.maxVisibleCharacters = visibleCharacters;
+
+            if (visibleCharacters >= totalVisibleCharacters)
+            {
+                CompleteCurrentLine();
+            }
+        }
+
+        private void CompleteCurrentLine()
+        {
+            isLineFullyVisible = true;
+            visibleCharacters = totalVisibleCharacters;
+            visibleCharacterProgress = totalVisibleCharacters;
+            Refresh();
+        }
+
+        private void ResetTypewriterState(bool showImmediately)
+        {
+            isLineFullyVisible = showImmediately;
+            visibleCharacters = 0;
+            totalVisibleCharacters = 0;
+            visibleCharacterProgress = 0f;
+
+            if (bodyLabel != null)
+            {
+                bodyLabel.maxVisibleCharacters = showImmediately ? int.MaxValue : 0;
+            }
         }
 
         private CollectibleWordData FindWordAt(Vector2 screenPosition)
