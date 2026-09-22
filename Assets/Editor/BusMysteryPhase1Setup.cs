@@ -23,6 +23,7 @@ namespace BusMystery.Editor
         private const string RouteAssetPath = "Assets/Data/Phase1BusRoute.asset";
         private const string TitleScenePath = "Assets/Scenes/Title.unity";
         private const string BusScenePath = "Assets/Scenes/Bus.unity";
+        private const string JapaneseFontPath = "Assets/Fonts/NotoSansJP-Regular SDF.asset";
 
         [MenuItem("Tools/BusMystery/Setup Phase 1")]
         public static void SetupPhase1()
@@ -272,11 +273,23 @@ namespace BusMystery.Editor
             var label = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI)).GetComponent<TMP_Text>();
             label.transform.SetParent(parent, false);
             label.text = text;
+            label.font = LoadJapaneseFont();
             label.fontSize = fontSize;
             label.alignment = alignment;
             label.color = Color.white;
             label.textWrappingMode = TextWrappingModes.NoWrap;
             return label;
+        }
+
+        private static TMP_FontAsset LoadJapaneseFont()
+        {
+            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(JapaneseFontPath);
+            if (font == null)
+            {
+                Debug.LogError($"Japanese TMP font asset was not found: {JapaneseFontPath}");
+            }
+
+            return font;
         }
 
         private static Button CreateButton(string name, Transform parent, string text, Color normalColor, Color textColor)

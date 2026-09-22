@@ -12,6 +12,7 @@ namespace BusMystery.UI
         [SerializeField] private StopReservationController reservationController;
         [SerializeField] private RectTransform optionContainer;
         [SerializeField] private TMP_Text titleLabel;
+        [SerializeField] private TMP_FontAsset fontAsset;
 
         private readonly List<StopReservationOption> options = new();
 
@@ -25,6 +26,11 @@ namespace BusMystery.UI
             if (reservationController == null)
             {
                 reservationController = FindFirstObjectByType<StopReservationController>();
+            }
+
+            if (fontAsset == null && titleLabel != null)
+            {
+                fontAsset = titleLabel.font;
             }
         }
 
@@ -135,7 +141,7 @@ namespace BusMystery.UI
 
         private StopReservationOption CreateOption()
         {
-            var option = CreateRuntimeOption();
+            var option = CreateRuntimeOption(fontAsset);
             var rectTransform = option.GetComponent<RectTransform>();
             rectTransform.SetParent(optionContainer, false);
             rectTransform.anchorMin = new Vector2(0f, 0.5f);
@@ -155,7 +161,7 @@ namespace BusMystery.UI
             return option;
         }
 
-        private static StopReservationOption CreateRuntimeOption()
+        private static StopReservationOption CreateRuntimeOption(TMP_FontAsset fontAsset)
         {
             var optionObject = new GameObject("Reservation Option", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button), typeof(LayoutElement), typeof(StopReservationOption));
             var image = optionObject.GetComponent<Image>();
@@ -168,6 +174,7 @@ namespace BusMystery.UI
             var label = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI)).GetComponent<TMP_Text>();
             label.transform.SetParent(optionObject.transform, false);
             label.text = "停留所";
+            label.font = fontAsset;
             label.fontSize = 22f;
             label.alignment = TextAlignmentOptions.Center;
             label.color = Color.white;

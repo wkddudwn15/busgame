@@ -37,6 +37,13 @@ namespace BusMystery.Editor
 
             var collectionManager = EnsureCollectionManager();
             var font = LoadJapaneseFont();
+            if (font == null)
+            {
+                Debug.LogError("Setup Phase 4 was stopped because the Japanese TMP font asset could not be loaded.");
+                return;
+            }
+
+            ApplyJapaneseFontToScene(font);
             CreateNotebookUI(canvas.transform, collectionManager, font);
 
             EditorSceneManager.MarkSceneDirty(scene);
@@ -133,6 +140,7 @@ namespace BusMystery.Editor
 
             var card = cardTemplate.gameObject.AddComponent<NotebookWordCardUI>();
             SetObjectReference(card, "wordLabel", cardLabel);
+            SetObjectReference(card, "fontAsset", font);
             cardTemplate.gameObject.SetActive(false);
 
             SetObjectReference(notebook, "panelRoot", panel.gameObject);
@@ -141,6 +149,22 @@ namespace BusMystery.Editor
             SetObjectReference(notebook, "cardPrefab", card);
 
             panel.gameObject.SetActive(false);
+        }
+
+        private static void ApplyJapaneseFontToScene(TMP_FontAsset font)
+        {
+            var texts = Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var text in texts)
+            {
+                text.font = font;
+                EditorUtility.SetDirty(text);
+            }
+
+            var reservationUis = Object.FindObjectsByType<BusReservationUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var reservationUi in reservationUis)
+            {
+                SetObjectReference(reservationUi, "fontAsset", font);
+            }
         }
 
         private static void RemoveGeneratedObject(string objectName)
@@ -171,6 +195,7 @@ namespace BusMystery.Editor
             label.color = Color.white;
             label.textWrappingMode = TextWrappingModes.NoWrap;
             label.raycastTarget = false;
+            EditorUtility.SetDirty(label);
             return label;
         }
 

@@ -7,6 +7,7 @@ namespace BusMystery.UI
     public class NotebookWordCardUI : MonoBehaviour
     {
         [SerializeField] private TMP_Text wordLabel;
+        [SerializeField] private TMP_FontAsset fontAsset;
 
         public void Initialize(CollectibleWordData word)
         {
@@ -17,6 +18,11 @@ namespace BusMystery.UI
 
             if (wordLabel != null)
             {
+                if (fontAsset != null)
+                {
+                    wordLabel.font = fontAsset;
+                }
+
                 wordLabel.text = word != null ? word.DisplayText : string.Empty;
             }
         }
