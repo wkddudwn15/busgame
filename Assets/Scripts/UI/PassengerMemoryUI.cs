@@ -52,6 +52,11 @@ namespace BusMystery.UI
                 return;
             }
 
+            if (WordNotebookUI.ShouldBlockBusInput)
+            {
+                return;
+            }
+
             var keyboard = Keyboard.current;
             if (keyboard != null)
             {
@@ -75,6 +80,11 @@ namespace BusMystery.UI
 
                 if (mouse.leftButton.wasPressedThisFrame)
                 {
+                    if (!IsBodyLabelClick(mousePosition))
+                    {
+                        return;
+                    }
+
                     if (TryCollectWordAt(mousePosition))
                     {
                         return;
@@ -186,7 +196,7 @@ namespace BusMystery.UI
                 return null;
             }
 
-            var linkIndex = TMP_TextUtilities.FindIntersectingLink(bodyLabel, screenPosition, null);
+            var linkIndex = TMP_TextUtilities.FindIntersectingLink(bodyLabel, screenPosition, GetBodyLabelEventCamera());
             if (linkIndex < 0 || linkIndex >= bodyLabel.textInfo.linkCount)
             {
                 return null;
@@ -212,6 +222,22 @@ namespace BusMystery.UI
             }
 
             return null;
+        }
+
+        private bool IsBodyLabelClick(Vector2 screenPosition)
+        {
+            return bodyLabel != null && RectTransformUtility.RectangleContainsScreenPoint(bodyLabel.rectTransform, screenPosition, GetBodyLabelEventCamera());
+        }
+
+        private Camera GetBodyLabelEventCamera()
+        {
+            var canvas = bodyLabel != null ? bodyLabel.canvas : null;
+            if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                return null;
+            }
+
+            return canvas.worldCamera;
         }
 
         private string BuildLinkedLine(string source, int sourceLineIndex, string highlightedWordId)
