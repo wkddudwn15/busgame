@@ -21,6 +21,7 @@ namespace BusMystery.UI
 
         private readonly List<NotebookWordCardUI> cards = new();
         private readonly Dictionary<string, WordNotebookCategory> classifiedWords = new();
+        private readonly Dictionary<WordNotebookCategory, int> categoryCounts = new();
         private static int closedFrame = -1;
         private bool isSubscribed;
         private NotebookWordCardUI dragCard;
@@ -280,12 +281,19 @@ namespace BusMystery.UI
             }
 
             cards.Clear();
+            categoryCounts.Clear();
 
             foreach (var word in collectionManager.CollectedWords)
             {
                 if (word == null)
                 {
                     continue;
+                }
+
+                var isClassified = classifiedWords.TryGetValue(word.Id, out var category);
+                if (isClassified)
+                {
+                    categoryCounts[category] = categoryCounts.TryGetValue(category, out var count) ? count + 1 : 1;
                 }
 
                 var targetContainer = GetCardContainer(word);
@@ -296,10 +304,11 @@ namespace BusMystery.UI
 
                 var card = Instantiate(cardPrefab, targetContainer);
                 card.gameObject.SetActive(true);
-                card.Initialize(word, this);
+                card.Initialize(word, this, isClassified);
                 cards.Add(card);
             }
 
+            UpdateCategoryCounts();
             LayoutRebuilder.ForceRebuildLayoutImmediate(cardContainer);
             if (categoryDropZones != null)
             {
@@ -308,6 +317,11 @@ namespace BusMystery.UI
                     if (dropZone != null && dropZone.CardContainer != null)
                     {
                         LayoutRebuilder.ForceRebuildLayoutImmediate(dropZone.CardContainer);
+                        var viewport = dropZone.CardContainer.parent as RectTransform;
+                        if (viewport != null)
+                        {
+                            LayoutRebuilder.ForceRebuildLayoutImmediate(viewport);
+                        }
                     }
                 }
             }
@@ -339,6 +353,25 @@ namespace BusMystery.UI
             }
 
             return null;
+        }
+
+        private void UpdateCategoryCounts()
+        {
+            if (categoryDropZones == null)
+            {
+                return;
+            }
+
+            foreach (var dropZone in categoryDropZones)
+            {
+                if (dropZone == null)
+                {
+                    continue;
+                }
+
+                categoryCounts.TryGetValue(dropZone.Category, out var count);
+                dropZone.SetCount(count);
+            }
         }
 
         private void ResolveCollectionManager()

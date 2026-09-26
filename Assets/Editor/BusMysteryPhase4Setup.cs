@@ -217,7 +217,7 @@ namespace BusMystery.Editor
             SetRect(label.rectTransform, new Vector2(0.05f, 0.78f), new Vector2(0.95f, 0.96f), new Vector2(0.5f, 0.5f), Vector2.zero);
 
             var scrollView = CreateImage("Category Scroll View", zoneImage.transform, new Color(1f, 1f, 1f, 0f));
-            scrollView.raycastTarget = false;
+            scrollView.raycastTarget = true;
             SetRect(scrollView.rectTransform, new Vector2(0.04f, 0.07f), new Vector2(0.96f, 0.74f), new Vector2(0.5f, 0.5f), Vector2.zero);
             var scrollRect = scrollView.gameObject.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
@@ -230,15 +230,15 @@ namespace BusMystery.Editor
 
             var content = new GameObject("Card Container", typeof(RectTransform)).GetComponent<RectTransform>();
             content.SetParent(viewport.transform, false);
-            SetRect(content, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, 72f));
+            SetRect(content, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, 58f));
 
             var grid = content.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(260f, 58f);
+            grid.cellSize = new Vector2(210f, 42f);
             grid.spacing = new Vector2(10f, 8f);
-            grid.padding = new RectOffset(0, 0, 0, 8);
+            grid.padding = new RectOffset(8, 8, 0, 10);
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
-            grid.constraintCount = 1;
-            grid.childAlignment = TextAnchor.UpperCenter;
+            grid.constraintCount = 2;
+            grid.childAlignment = TextAnchor.UpperLeft;
 
             var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
@@ -250,6 +250,7 @@ namespace BusMystery.Editor
             SetEnumValue(dropZone, "category", (int)category);
             SetObjectReference(dropZone, "cardContainer", content);
             SetObjectReference(dropZone, "highlightImage", zoneImage);
+            SetObjectReference(dropZone, "titleLabel", label);
             return dropZone;
         }
 
