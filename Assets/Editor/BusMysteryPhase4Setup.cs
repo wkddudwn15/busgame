@@ -113,9 +113,14 @@ namespace BusMystery.Editor
             var listPage = new GameObject("Word List Page", typeof(RectTransform)).GetComponent<RectTransform>();
             listPage.SetParent(panel.transform, false);
             SetRect(listPage, new Vector2(0.04f, 0.07f), new Vector2(0.96f, 0.88f), new Vector2(0.5f, 0.5f), Vector2.zero);
+            var listPageCanvasGroup = listPage.gameObject.AddComponent<CanvasGroup>();
+
+            var categoryButton = CreateButton("Open Category Page Button", listPage, "分類ページへ", new Color(0.42f, 0.31f, 0.20f), Color.white, font);
+            SetRect(categoryButton.GetComponent<RectTransform>(), new Vector2(0.79f, 0.91f), new Vector2(0.99f, 0.99f), new Vector2(0.5f, 0.5f), Vector2.zero);
+            UnityEventTools.AddPersistentListener(categoryButton.onClick, notebook.ShowCategoryPage);
 
             var scrollView = CreateImage("Card Scroll View", listPage, new Color(0.76f, 0.67f, 0.50f, 0.55f));
-            SetRect(scrollView.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero);
+            SetRect(scrollView.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 0.89f), new Vector2(0.5f, 0.5f), Vector2.zero);
             var scrollRect = scrollView.gameObject.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
             scrollRect.vertical = true;
@@ -191,6 +196,7 @@ namespace BusMystery.Editor
             SetObjectReference(notebook, "panelRoot", panel.gameObject);
             SetObjectReference(notebook, "collectionManager", collectionManager);
             SetObjectReference(notebook, "listPageRoot", listPage.gameObject);
+            SetObjectReference(notebook, "listPageCanvasGroup", listPageCanvasGroup);
             SetObjectReference(notebook, "categoryPageRoot", categoryPage.gameObject);
             SetObjectReference(notebook, "cardContainer", content);
             SetObjectReference(notebook, "cardPrefab", card);
@@ -210,17 +216,35 @@ namespace BusMystery.Editor
             label.color = new Color(0.12f, 0.08f, 0.04f);
             SetRect(label.rectTransform, new Vector2(0.05f, 0.78f), new Vector2(0.95f, 0.96f), new Vector2(0.5f, 0.5f), Vector2.zero);
 
+            var scrollView = CreateImage("Category Scroll View", zoneImage.transform, new Color(1f, 1f, 1f, 0f));
+            scrollView.raycastTarget = false;
+            SetRect(scrollView.rectTransform, new Vector2(0.04f, 0.07f), new Vector2(0.96f, 0.74f), new Vector2(0.5f, 0.5f), Vector2.zero);
+            var scrollRect = scrollView.gameObject.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+            scrollRect.vertical = true;
+
+            var viewport = CreateImage("Viewport", scrollView.transform, new Color(1f, 1f, 1f, 0f));
+            viewport.raycastTarget = false;
+            SetRect(viewport.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero);
+            viewport.gameObject.AddComponent<RectMask2D>();
+
             var content = new GameObject("Card Container", typeof(RectTransform)).GetComponent<RectTransform>();
-            content.SetParent(zoneImage.transform, false);
-            SetRect(content, new Vector2(0.05f, 0.08f), new Vector2(0.95f, 0.74f), new Vector2(0.5f, 1f), Vector2.zero);
+            content.SetParent(viewport.transform, false);
+            SetRect(content, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, 72f));
 
             var grid = content.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(300f, 72f);
+            grid.cellSize = new Vector2(260f, 58f);
             grid.spacing = new Vector2(10f, 8f);
-            grid.padding = new RectOffset(0, 0, 0, 0);
+            grid.padding = new RectOffset(0, 0, 0, 8);
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
             grid.constraintCount = 1;
             grid.childAlignment = TextAnchor.UpperCenter;
+
+            var fitter = content.gameObject.AddComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            scrollRect.viewport = viewport.rectTransform;
+            scrollRect.content = content;
 
             var dropZone = zoneImage.gameObject.AddComponent<WordNotebookCategoryDropZone>();
             SetEnumValue(dropZone, "category", (int)category);

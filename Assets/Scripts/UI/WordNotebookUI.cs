@@ -12,6 +12,7 @@ namespace BusMystery.UI
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private WordCollectionManager collectionManager;
         [SerializeField] private GameObject listPageRoot;
+        [SerializeField] private CanvasGroup listPageCanvasGroup;
         [SerializeField] private GameObject categoryPageRoot;
         [SerializeField] private RectTransform cardContainer;
         [SerializeField] private NotebookWordCardUI cardPrefab;
@@ -112,6 +113,8 @@ namespace BusMystery.UI
                 listPageRoot.SetActive(true);
             }
 
+            SetListPageVisible(true);
+
             if (categoryPageRoot != null)
             {
                 categoryPageRoot.SetActive(false);
@@ -122,15 +125,17 @@ namespace BusMystery.UI
 
         public void ShowCategoryPage()
         {
-            ShowCategoryPage(false);
+            ShowCategoryPage(false, false);
         }
 
-        private void ShowCategoryPage(bool keepListPageActive)
+        private void ShowCategoryPage(bool keepListPageActive, bool hideListPageVisually)
         {
             if (listPageRoot != null)
             {
                 listPageRoot.SetActive(keepListPageActive);
             }
+
+            SetListPageVisible(!hideListPageVisually);
 
             if (categoryPageRoot != null)
             {
@@ -151,11 +156,12 @@ namespace BusMystery.UI
                 return;
             }
 
-            ShowCategoryPage(true);
+            ShowCategoryPage(true, true);
             dragSourceCard = sourceCard;
             dragCard = Instantiate(cardPrefab, dragLayer != null ? dragLayer : panelRoot.transform);
             dragCard.gameObject.SetActive(true);
             dragCard.Initialize(sourceCard.WordData);
+            PrepareDragCardRect(dragCard);
 
             var canvasGroup = dragCard.GetComponent<CanvasGroup>();
             if (canvasGroup == null)
@@ -199,7 +205,7 @@ namespace BusMystery.UI
             }
 
             ClearDragState();
-            ShowCategoryPage(false);
+            ShowCategoryPage(false, false);
             Refresh();
         }
 
@@ -385,6 +391,43 @@ namespace BusMystery.UI
 
             collectionManager.WordCollected -= HandleWordCollected;
             isSubscribed = false;
+        }
+
+        private void SetListPageVisible(bool visible)
+        {
+            if (listPageCanvasGroup == null && listPageRoot != null)
+            {
+                listPageCanvasGroup = listPageRoot.GetComponent<CanvasGroup>();
+            }
+
+            if (listPageCanvasGroup == null)
+            {
+                return;
+            }
+
+            listPageCanvasGroup.alpha = visible ? 1f : 0f;
+            listPageCanvasGroup.interactable = visible;
+            listPageCanvasGroup.blocksRaycasts = visible;
+        }
+
+        private static void PrepareDragCardRect(NotebookWordCardUI card)
+        {
+            if (card == null)
+            {
+                return;
+            }
+
+            var rect = card.GetComponent<RectTransform>();
+            if (rect == null)
+            {
+                return;
+            }
+
+            rect.anchorMin = new Vector2(0.5f, 0.5f);
+            rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.pivot = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = new Vector2(300f, 72f);
+            rect.localScale = Vector3.one;
         }
 
         private void InitializeDropZones()
