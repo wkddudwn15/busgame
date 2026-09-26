@@ -26,6 +26,8 @@ namespace BusMystery.UI
         private bool isSubscribed;
         private NotebookWordCardUI dragCard;
         private NotebookWordCardUI dragSourceCard;
+        private CanvasGroup dragSourceCanvasGroup;
+        private float dragSourceOriginalAlpha = 1f;
         private WordNotebookCategoryDropZone hoveredDropZone;
 
         public static bool IsAnyOpen { get; private set; }
@@ -159,6 +161,7 @@ namespace BusMystery.UI
 
             ShowCategoryPage(true, true);
             dragSourceCard = sourceCard;
+            HideDragSourceCard();
             dragCard = Instantiate(cardPrefab, dragLayer != null ? dragLayer : panelRoot.transform);
             dragCard.gameObject.SetActive(true);
             dragCard.Initialize(sourceCard.WordData);
@@ -463,6 +466,38 @@ namespace BusMystery.UI
             rect.localScale = Vector3.one;
         }
 
+        private void HideDragSourceCard()
+        {
+            if (dragSourceCard == null)
+            {
+                return;
+            }
+
+            dragSourceCanvasGroup = dragSourceCard.GetComponent<CanvasGroup>();
+            if (dragSourceCanvasGroup == null)
+            {
+                dragSourceCanvasGroup = dragSourceCard.gameObject.AddComponent<CanvasGroup>();
+                dragSourceOriginalAlpha = 1f;
+            }
+            else
+            {
+                dragSourceOriginalAlpha = dragSourceCanvasGroup.alpha;
+            }
+
+            dragSourceCanvasGroup.alpha = 0f;
+        }
+
+        private void RestoreDragSourceCard()
+        {
+            if (dragSourceCanvasGroup != null)
+            {
+                dragSourceCanvasGroup.alpha = dragSourceOriginalAlpha;
+            }
+
+            dragSourceCanvasGroup = null;
+            dragSourceOriginalAlpha = 1f;
+        }
+
         private void InitializeDropZones()
         {
             if (categoryDropZones == null)
@@ -479,6 +514,7 @@ namespace BusMystery.UI
         private void ClearDragState()
         {
             ClearHoveredDropZone(hoveredDropZone);
+            RestoreDragSourceCard();
             if (dragCard != null)
             {
                 Destroy(dragCard.gameObject);
