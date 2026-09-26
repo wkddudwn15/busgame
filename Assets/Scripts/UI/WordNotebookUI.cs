@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BusMystery.Words;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -10,12 +11,20 @@ namespace BusMystery.UI
     {
         [SerializeField] private GameObject panelRoot;
         [SerializeField] private WordCollectionManager collectionManager;
+        [SerializeField] private GameObject listPageRoot;
+        [SerializeField] private GameObject categoryPageRoot;
         [SerializeField] private RectTransform cardContainer;
         [SerializeField] private NotebookWordCardUI cardPrefab;
+        [SerializeField] private RectTransform dragLayer;
+        [SerializeField] private WordNotebookCategoryDropZone[] categoryDropZones;
 
         private readonly List<NotebookWordCardUI> cards = new();
+        private readonly Dictionary<string, WordNotebookCategory> classifiedWords = new();
         private static int closedFrame = -1;
         private bool isSubscribed;
+        private NotebookWordCardUI dragCard;
+        private NotebookWordCardUI dragSourceCard;
+        private WordNotebookCategoryDropZone hoveredDropZone;
 
         public static bool IsAnyOpen { get; private set; }
         public static bool ShouldBlockBusInput => IsAnyOpen || closedFrame == Time.frameCount;
@@ -68,6 +77,7 @@ namespace BusMystery.UI
             ResolveCollectionManager();
             panelRoot.SetActive(true);
             IsAnyOpen = true;
+            ShowListPage();
             Refresh();
         }
 
@@ -80,6 +90,7 @@ namespace BusMystery.UI
             }
 
             IsAnyOpen = false;
+            ClearDragState();
             if (wasOpen)
             {
                 closedFrame = Time.frameCount;
@@ -92,6 +103,146 @@ namespace BusMystery.UI
             {
                 Refresh();
             }
+        }
+
+        public void ShowListPage()
+        {
+            if (listPageRoot != null)
+            {
+                listPageRoot.SetActive(true);
+            }
+
+            if (categoryPageRoot != null)
+            {
+                categoryPageRoot.SetActive(false);
+            }
+
+            ClearHoveredDropZone(hoveredDropZone);
+        }
+
+        public void ShowCategoryPage()
+        {
+            if (listPageRoot != null)
+            {
+                listPageRoot.SetActive(false);
+            }
+
+            if (categoryPageRoot != null)
+            {
+                categoryPageRoot.SetActive(true);
+            }
+        }
+
+        public void BeginCardDrag(NotebookWordCardUI sourceCard, PointerEventData eventData)
+        {
+            if (sourceCard == null || sourceCard.WordData == null)
+            {
+                return;
+            }
+
+            ShowCategoryPage();
+            dragSourceCard = sourceCard;
+            dragCard = Instantiate(cardPrefab, dragLayer != null ? dragLayer : panelRoot.transform);
+            dragCard.gameObject.SetActive(true);
+            dragCard.Initialize(sourceCard.WordData);
+
+            var canvasGroup = dragCard.GetComponent<CanvasGroup>();
+            if (canvasGroup == null)
+            {
+                canvasGroup = dragCard.gameObject.AddComponent<CanvasGroup>();
+            }
+
+            canvasGroup.blocksRaycasts = false;
+            canvasGroup.alpha = 0.92f;
+            UpdateCardDrag(eventData);
+        }
+
+        public void UpdateCardDrag(PointerEventData eventData)
+        {
+            if (dragCard == null || eventData == null)
+            {
+                return;
+            }
+
+            var dragRect = dragCard.GetComponent<RectTransform>();
+            var parentRect = dragRect.parent as RectTransform;
+            if (parentRect == null)
+            {
+                return;
+            }
+
+            var camera = eventData != null ? eventData.pressEventCamera : null;
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, eventData.position, camera, out var localPoint))
+            {
+                dragRect.anchoredPosition = localPoint;
+            }
+
+            UpdateHoveredDropZone(eventData.position, camera);
+        }
+
+        public void EndCardDrag(PointerEventData eventData)
+        {
+            if (dragSourceCard != null && dragSourceCard.WordData != null && hoveredDropZone != null)
+            {
+                classifiedWords[dragSourceCard.WordData.Id] = hoveredDropZone.Category;
+            }
+
+            ClearDragState();
+            Refresh();
+        }
+
+        public void SetHoveredDropZone(WordNotebookCategoryDropZone dropZone)
+        {
+            if (dragCard == null || dropZone == hoveredDropZone)
+            {
+                return;
+            }
+
+            ClearHoveredDropZone(hoveredDropZone);
+            hoveredDropZone = dropZone;
+            hoveredDropZone?.SetHighlighted(true);
+        }
+
+        public void ClearHoveredDropZone(WordNotebookCategoryDropZone dropZone)
+        {
+            if (dropZone == null || hoveredDropZone != dropZone)
+            {
+                return;
+            }
+
+            hoveredDropZone.SetHighlighted(false);
+            hoveredDropZone = null;
+        }
+
+        private void UpdateHoveredDropZone(Vector2 screenPosition, Camera eventCamera)
+        {
+            if (categoryDropZones == null)
+            {
+                ClearHoveredDropZone(hoveredDropZone);
+                return;
+            }
+
+            foreach (var dropZone in categoryDropZones)
+            {
+                if (dropZone == null)
+                {
+                    continue;
+                }
+
+                var dropZoneRect = dropZone.transform as RectTransform;
+                if (dropZoneRect == null)
+                {
+                    continue;
+                }
+
+                if (RectTransformUtility.RectangleContainsScreenPoint(dropZoneRect, screenPosition, eventCamera))
+                {
+                    SetHoveredDropZone(dropZone);
+                    return;
+                }
+            }
+
+            ClearHoveredDropZone(hoveredDropZone);
         }
 
         private void Refresh()
@@ -114,13 +265,62 @@ namespace BusMystery.UI
 
             foreach (var word in collectionManager.CollectedWords)
             {
-                var card = Instantiate(cardPrefab, cardContainer);
+                if (word == null)
+                {
+                    continue;
+                }
+
+                var targetContainer = GetCardContainer(word);
+                if (targetContainer == null)
+                {
+                    continue;
+                }
+
+                var card = Instantiate(cardPrefab, targetContainer);
                 card.gameObject.SetActive(true);
-                card.Initialize(word);
+                card.Initialize(word, this);
                 cards.Add(card);
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(cardContainer);
+            if (categoryDropZones != null)
+            {
+                foreach (var dropZone in categoryDropZones)
+                {
+                    if (dropZone != null && dropZone.CardContainer != null)
+                    {
+                        LayoutRebuilder.ForceRebuildLayoutImmediate(dropZone.CardContainer);
+                    }
+                }
+            }
+        }
+
+        private RectTransform GetCardContainer(CollectibleWordData word)
+        {
+            if (word == null || string.IsNullOrEmpty(word.Id))
+            {
+                return null;
+            }
+
+            if (!classifiedWords.TryGetValue(word.Id, out var category))
+            {
+                return cardContainer;
+            }
+
+            if (categoryDropZones == null)
+            {
+                return null;
+            }
+
+            foreach (var dropZone in categoryDropZones)
+            {
+                if (dropZone != null && dropZone.Category == category)
+                {
+                    return dropZone.CardContainer;
+                }
+            }
+
+            return null;
         }
 
         private void ResolveCollectionManager()
@@ -159,6 +359,7 @@ namespace BusMystery.UI
                 return;
             }
 
+            InitializeDropZones();
             collectionManager.WordCollected += HandleWordCollected;
             isSubscribed = true;
         }
@@ -172,6 +373,31 @@ namespace BusMystery.UI
 
             collectionManager.WordCollected -= HandleWordCollected;
             isSubscribed = false;
+        }
+
+        private void InitializeDropZones()
+        {
+            if (categoryDropZones == null)
+            {
+                return;
+            }
+
+            foreach (var dropZone in categoryDropZones)
+            {
+                dropZone?.Initialize(this);
+            }
+        }
+
+        private void ClearDragState()
+        {
+            ClearHoveredDropZone(hoveredDropZone);
+            if (dragCard != null)
+            {
+                Destroy(dragCard.gameObject);
+            }
+
+            dragCard = null;
+            dragSourceCard = null;
         }
     }
 }

@@ -110,8 +110,12 @@ namespace BusMystery.Editor
             SetRect(closeButton.GetComponent<RectTransform>(), new Vector2(0.78f, 0.90f), new Vector2(0.96f, 0.98f), new Vector2(0.5f, 0.5f), Vector2.zero);
             UnityEventTools.AddPersistentListener(closeButton.onClick, notebook.Close);
 
-            var scrollView = CreateImage("Card Scroll View", panel.transform, new Color(0.76f, 0.67f, 0.50f, 0.55f));
-            SetRect(scrollView.rectTransform, new Vector2(0.06f, 0.08f), new Vector2(0.94f, 0.86f), new Vector2(0.5f, 0.5f), Vector2.zero);
+            var listPage = new GameObject("Word List Page", typeof(RectTransform)).GetComponent<RectTransform>();
+            listPage.SetParent(panel.transform, false);
+            SetRect(listPage, new Vector2(0.04f, 0.07f), new Vector2(0.96f, 0.88f), new Vector2(0.5f, 0.5f), Vector2.zero);
+
+            var scrollView = CreateImage("Card Scroll View", listPage, new Color(0.76f, 0.67f, 0.50f, 0.55f));
+            SetRect(scrollView.rectTransform, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero);
             var scrollRect = scrollView.gameObject.AddComponent<ScrollRect>();
             scrollRect.horizontal = false;
             scrollRect.vertical = true;
@@ -140,7 +144,7 @@ namespace BusMystery.Editor
             scrollRect.content = content;
 
             var cardTemplate = CreateImage("Notebook Word Card Template", content, new Color(0.96f, 0.90f, 0.76f));
-            cardTemplate.raycastTarget = false;
+            cardTemplate.raycastTarget = true;
             SetRect(cardTemplate.rectTransform, new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(0f, 1f), grid.cellSize);
             var cardLayout = cardTemplate.gameObject.AddComponent<LayoutElement>();
             cardLayout.preferredWidth = grid.cellSize.x;
@@ -155,12 +159,74 @@ namespace BusMystery.Editor
             SetObjectReference(card, "fontAsset", font);
             cardTemplate.gameObject.SetActive(false);
 
+            var categoryPage = new GameObject("Word Category Page", typeof(RectTransform)).GetComponent<RectTransform>();
+            categoryPage.SetParent(panel.transform, false);
+            SetRect(categoryPage, new Vector2(0.04f, 0.07f), new Vector2(0.96f, 0.88f), new Vector2(0.5f, 0.5f), Vector2.zero);
+
+            var backButton = CreateButton("Back To Word List Button", categoryPage, "単語一覧へ", new Color(0.42f, 0.31f, 0.20f), Color.white, font);
+            SetRect(backButton.GetComponent<RectTransform>(), new Vector2(0.01f, 0.91f), new Vector2(0.20f, 0.99f), new Vector2(0.5f, 0.5f), Vector2.zero);
+            UnityEventTools.AddPersistentListener(backButton.onClick, notebook.ShowListPage);
+
+            var categoryTitle = CreateText("Category Page Hint", categoryPage, "カードを分類してください", 22f, TextAlignmentOptions.Center, font);
+            categoryTitle.color = new Color(0.13f, 0.09f, 0.05f);
+            SetRect(categoryTitle.rectTransform, new Vector2(0.22f, 0.91f), new Vector2(0.78f, 0.99f), new Vector2(0.5f, 0.5f), Vector2.zero);
+
+            var dropZones = new[]
+            {
+                CreateCategoryDropZone(categoryPage, WordNotebookCategory.Cause, "Cause", new Vector2(0.00f, 0.62f), new Vector2(0.48f, 0.89f), font),
+                CreateCategoryDropZone(categoryPage, WordNotebookCategory.Action, "Action", new Vector2(0.52f, 0.62f), new Vector2(1.00f, 0.89f), font),
+                CreateCategoryDropZone(categoryPage, WordNotebookCategory.Event, "Event", new Vector2(0.00f, 0.32f), new Vector2(0.48f, 0.59f), font),
+                CreateCategoryDropZone(categoryPage, WordNotebookCategory.PersonRole, "Person / Role", new Vector2(0.52f, 0.32f), new Vector2(1.00f, 0.59f), font),
+                CreateCategoryDropZone(categoryPage, WordNotebookCategory.Place, "Place", new Vector2(0.00f, 0.02f), new Vector2(0.48f, 0.29f), font),
+                CreateCategoryDropZone(categoryPage, WordNotebookCategory.Relation, "Relation", new Vector2(0.52f, 0.02f), new Vector2(1.00f, 0.29f), font)
+            };
+
+            categoryPage.gameObject.SetActive(false);
+
+            var dragLayer = new GameObject("Drag Layer", typeof(RectTransform)).GetComponent<RectTransform>();
+            dragLayer.SetParent(panel.transform, false);
+            SetRect(dragLayer, Vector2.zero, Vector2.one, new Vector2(0.5f, 0.5f), Vector2.zero);
+            dragLayer.SetAsLastSibling();
+
             SetObjectReference(notebook, "panelRoot", panel.gameObject);
             SetObjectReference(notebook, "collectionManager", collectionManager);
+            SetObjectReference(notebook, "listPageRoot", listPage.gameObject);
+            SetObjectReference(notebook, "categoryPageRoot", categoryPage.gameObject);
             SetObjectReference(notebook, "cardContainer", content);
             SetObjectReference(notebook, "cardPrefab", card);
+            SetObjectReference(notebook, "dragLayer", dragLayer);
+            SetObjectArrayReference(notebook, "categoryDropZones", dropZones);
 
             panel.gameObject.SetActive(false);
+        }
+
+        private static WordNotebookCategoryDropZone CreateCategoryDropZone(Transform parent, WordNotebookCategory category, string title, Vector2 anchorMin, Vector2 anchorMax, TMP_FontAsset font)
+        {
+            var zoneImage = CreateImage($"{title} Drop Zone", parent, new Color(0.72f, 0.63f, 0.46f, 0.62f));
+            zoneImage.raycastTarget = true;
+            SetRect(zoneImage.rectTransform, anchorMin, anchorMax, new Vector2(0.5f, 0.5f), Vector2.zero);
+
+            var label = CreateText("Category Label", zoneImage.transform, title, 20f, TextAlignmentOptions.Left, font);
+            label.color = new Color(0.12f, 0.08f, 0.04f);
+            SetRect(label.rectTransform, new Vector2(0.05f, 0.78f), new Vector2(0.95f, 0.96f), new Vector2(0.5f, 0.5f), Vector2.zero);
+
+            var content = new GameObject("Card Container", typeof(RectTransform)).GetComponent<RectTransform>();
+            content.SetParent(zoneImage.transform, false);
+            SetRect(content, new Vector2(0.05f, 0.08f), new Vector2(0.95f, 0.74f), new Vector2(0.5f, 1f), Vector2.zero);
+
+            var grid = content.gameObject.AddComponent<GridLayoutGroup>();
+            grid.cellSize = new Vector2(300f, 72f);
+            grid.spacing = new Vector2(10f, 8f);
+            grid.padding = new RectOffset(0, 0, 0, 0);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
+            grid.constraintCount = 1;
+            grid.childAlignment = TextAnchor.UpperCenter;
+
+            var dropZone = zoneImage.gameObject.AddComponent<WordNotebookCategoryDropZone>();
+            SetEnumValue(dropZone, "category", (int)category);
+            SetObjectReference(dropZone, "cardContainer", content);
+            SetObjectReference(dropZone, "highlightImage", zoneImage);
+            return dropZone;
         }
 
         private static void ApplyJapaneseFontToScene(TMP_FontAsset font)
@@ -252,6 +318,41 @@ namespace BusMystery.Editor
             }
 
             property.objectReferenceValue = reference;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
+        private static void SetObjectArrayReference(Object target, string propertyName, Object[] references)
+        {
+            var serialized = new SerializedObject(target);
+            var property = serialized.FindProperty(propertyName);
+            if (property == null || !property.isArray)
+            {
+                Debug.LogError($"Serialized array property not found: {target.name}.{propertyName}");
+                return;
+            }
+
+            property.arraySize = references.Length;
+            for (var i = 0; i < references.Length; i++)
+            {
+                property.GetArrayElementAtIndex(i).objectReferenceValue = references[i];
+            }
+
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
+        private static void SetEnumValue(Object target, string propertyName, int enumValueIndex)
+        {
+            var serialized = new SerializedObject(target);
+            var property = serialized.FindProperty(propertyName);
+            if (property == null)
+            {
+                Debug.LogError($"Serialized enum property not found: {target.name}.{propertyName}");
+                return;
+            }
+
+            property.enumValueIndex = enumValueIndex;
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(target);
         }
