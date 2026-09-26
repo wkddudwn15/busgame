@@ -122,14 +122,25 @@ namespace BusMystery.UI
 
         public void ShowCategoryPage()
         {
+            ShowCategoryPage(false);
+        }
+
+        private void ShowCategoryPage(bool keepListPageActive)
+        {
             if (listPageRoot != null)
             {
-                listPageRoot.SetActive(false);
+                listPageRoot.SetActive(keepListPageActive);
             }
 
             if (categoryPageRoot != null)
             {
                 categoryPageRoot.SetActive(true);
+                categoryPageRoot.transform.SetAsLastSibling();
+            }
+
+            if (dragLayer != null)
+            {
+                dragLayer.SetAsLastSibling();
             }
         }
 
@@ -140,7 +151,7 @@ namespace BusMystery.UI
                 return;
             }
 
-            ShowCategoryPage();
+            ShowCategoryPage(true);
             dragSourceCard = sourceCard;
             dragCard = Instantiate(cardPrefab, dragLayer != null ? dragLayer : panelRoot.transform);
             dragCard.gameObject.SetActive(true);
@@ -188,6 +199,7 @@ namespace BusMystery.UI
             }
 
             ClearDragState();
+            ShowCategoryPage(false);
             Refresh();
         }
 
